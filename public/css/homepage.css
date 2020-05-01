@@ -1,0 +1,36 @@
+/* 画像に文字を重ねるためのcss */
+/* https://manablog.org/img-text/ */
+#img-box{
+  position: relative;
+}
+#img-box-mini{
+  position: absolute;
+  /* bottom: 20px;
+  left: 0px; */
+  top: 0px;
+  right: 0px;
+  /* float: right; */
+  width:100%;
+  color: red;
+ }
+#img-box-text{
+  text-align: center;
+  width: 100%;
+}
+
+/* bootstrap.cssに対する上書き */
+h3{background:#FFCCFF;}
+h5{background:#FFDDFF;}
+p{margin-bottom: 0.05rem;}
+ul{margin-bottom: 0;}
+li{
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-body {
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 0.75rem;
+    padding-left:1.25rem;
+}

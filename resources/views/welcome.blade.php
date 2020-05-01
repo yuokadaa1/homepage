@@ -8,6 +8,9 @@
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+        <!-- bootstrap(cssのみ) -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
 
         <!-- Styles -->
         <style>
@@ -85,15 +88,28 @@
                 </div>
 
                 <div class="links">
-                    <a href="https://laravel.com/docs">Docs</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://blog.laravel.com">Blog</a>
-                    <a href="https://nova.laravel.com">Nova</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://vapor.laravel.com">Vapor</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+                  <a href="https://laravel.com/docs" class="disabled">Docs</a>
+                  <a href="https://laracasts.com" class="disabled">Laracasts</a>
+                  <a href="https://laravel-news.com" class="disabled">News</a>
+                  <!-- <a href="https://blog.laravel.com">Blog</a> -->
+                  <a href={{ url("/blog") }} class="text-primary">Blog</a>
+                  <a href="https://nova.laravel.com" class="disabled">Nova</a>
+                  <a href="https://forge.laravel.com" class="disabled">Forge</a>
+                  <a href="https://vapor.laravel.com" class="disabled">Vapor</a>
+                  <a href="https://github.com/laravel/laravel" class="disabled">GitHub</a>
+                  <a href={{ url("/admin") }} class="text-primary">admin</a>
                 </div>
+
+                <!-- <div id="menu" class="links">
+                  <ul>
+                    <li><a href={{ url("/first") }} class="active">初めに</a></li>
+                    <li><a href={{ url("/blog") }}>Blog</a></li>
+                    <li><a href={{ url("/exchange") }}>為替</a></li>
+                    <li><a href={{ url("/zaimu") }}>財務</a></li>
+                  </ul>
+                </div> -->
+
+
             </div>
         </div>
     </body>
