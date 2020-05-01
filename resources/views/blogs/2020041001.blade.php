@@ -94,32 +94,38 @@
   {{$json[1]->meigaraCode}}
 </a>
 
-@if (isset( $a ))
+@if (isset( $json ))
   <div class="container">
-    <table class="table table-striped">
-      <tr>
+    <table class="table table-hover-responsive">
+      <tr class="thead-dark">
+        <th>指標</th>
         <th>日時</th>
         <th>始値</th>
         <th>終値</th>
         <th>高値</th>
         <th>安値</th>
         <th>取引高</th>
+        <th>DOW前日比</th>
+        <th>DOW前日比%</th>
+        <th>GPIF</th>
       </tr>
 
-      <!-- ああーーーーーこれ、配列の書き方だけど、正しくは連想配列->    -->
       @foreach($json as $Data)
-        @if ($Data["time"] == "11:30:00" or $Data["time"] == "12:00:00")
-          <!-- 11:30-12:30のものは非表示 -->
+        @if ($Data->meigaraCode == "DJIA")
         @else
-          <tr>
-            <td>{{ $Data["date"] }}</td>
-            <td>{{ $Data["openPrice"] }}</td>
-            <td>{{ $Data["closingPrice"] }}</td>
-            <td>{{ $Data["highPrice"] }}</td>
-            <td>{{ $Data["lowPrice"] }}</td>
-            <td>{{ $Data["volume"] }}</td>
-          </tr>
         @endif
+        <tr class="success">
+            <td class="warning">{{ $Data->meigaraCode }}</td>
+            <td>{{ $Data->date }} {{ $Data->time }}</td>
+            <td>{{ $Data->openingPrice }}</td>
+            <td>{{ $Data->closingPrice }}</td>
+            <td>{{ $Data->highPrice }}</td>
+            <td>{{ $Data->lowPrice }}</td>
+            <td>{{ $Data->volume }}</td>
+            <td>{{ $Data->beforeRatio }}</td>
+            <td>{{ $Data->beforeRatioP }}</td>
+            <td>{{ $Data->ETF }}</td>
+          </tr>
       @endforeach
     </table>
   </div>

@@ -37,7 +37,7 @@ class PostsController extends Controller
     private function b2020041001(){
 
       $GPIFData = DB::table('meigaras')
-      ->select(DB::raw('meigaras.meigaraCode,meigaras.date,meigaras.time,"" as openingPrice,"" as closingPrice,"" as highPrice,"" as lowPrice,meigaras.volume,"" as beforeRatio,"" as beforeRatioP,gpifs.ETF'))
+      ->select(DB::raw('meigaras.meigaraCode,meigaras.date,meigaras.time,openingPrice,closingPrice,highPrice,lowPrice,meigaras.volume,"" as beforeRatio,"" as beforeRatioP,gpifs.ETF'))
       ->where('meigaras.time', '=', '12:30:00')
       ->leftjoin('gpifs', 'meigaras.date', '=', 'gpifs.date');
       // ->limit(10)
@@ -50,11 +50,12 @@ class PostsController extends Controller
       ->orwhere('time', '14:30:00');
 
       $indexData = DB::table('indices')
-      ->select(DB::raw(' `index` as meigaraCode,date,"23:59:59" as time,openingPrice,closingPrice,highPrice,lowPrice,"" as volume,beforeRatio,beforeRatioP,"" as ETF '))
+      ->select(DB::raw(' `index` as meigaraCode,date,"" as time,openingPrice,closingPrice,highPrice,lowPrice,"" as volume,beforeRatio,beforeRatioP,"" as ETF '))
       ->where('date','>=','2020-02-24')
       ->union($meigaraData)
       ->union($GPIFData)
       ->orderby('date','asc')
+      ->orderby('meigaraCode','ASC')
       ->orderby('time','asc')
       ->get();
 
