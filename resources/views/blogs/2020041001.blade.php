@@ -112,10 +112,21 @@
 
       @foreach($json as $Data)
         @if ($Data->meigaraCode == "DJIA")
+          <tr class="thead-light">
+            <th>{{ $Data->meigaraCode }}</th>
+            <th>{{ $Data->date }} {{ $Data->time }}</th>
+            <th>{{ $Data->openingPrice }}</th>
+            <th>{{ $Data->closingPrice }}</th>
+            <th>{{ $Data->highPrice }}</th>
+            <th>{{ $Data->lowPrice }}</th>
+            <th>{{ $Data->volume }}</th>
+            <th>{{ $Data->beforeRatio }}</th>
+            <th>{{ $Data->beforeRatioP }}</th>
+            <th>{{ $Data->ETF }}</th>
+          <tr>
         @else
-        @endif
-        <tr class="success">
-            <td class="warning">{{ $Data->meigaraCode }}</td>
+          <tr >
+            <td>{{ $Data->meigaraCode }}</td>
             <td>{{ $Data->date }} {{ $Data->time }}</td>
             <td>{{ $Data->openingPrice }}</td>
             <td>{{ $Data->closingPrice }}</td>
@@ -126,6 +137,8 @@
             <td>{{ $Data->beforeRatioP }}</td>
             <td>{{ $Data->ETF }}</td>
           </tr>
+        @endif
+
       @endforeach
     </table>
   </div>
