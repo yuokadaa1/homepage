@@ -36,34 +36,110 @@ class PostsController extends Controller
 
     private function b2020041001(){
 
+
+      $users = DB::select(DB::raw('
+      SELECT m1.meigaraCode as meigaraCode,
+             m1.date AS date,
+             m1.time AS time,
+             m1.openingPrice as openingPrice,
+             m1.closingPrice as closingPrice,
+             m1.highPrice as highPrice,
+             m1.lowPrice as lowPrice,
+             m1.volume as volume,
+             m4.openingPrice AS todayOpening,
+             m2.closingPrice AS lastClosing,
+             m2.date as lastDate,
+             m2.time as lastTime,
+             gpif.ETF as gpifETF,
+             "" as beforeRatio,
+             "" as beforeRatio,
+             "" as ETF
+      FROM meigaras as m1
+      INNER JOIN meigaras as m2
+              ON m2.date = (SELECT MAX(m3.date)
+                            FROM meigaras as m3
+                            WHERE m3.date < m1.date and m3.time = "09:00:00")
+                    		  and m2.time = "14:30:00"
+      INNER JOIN meigaras as m4
+              on m1.date = m4.date
+              and m4.time = "09:00:00"
+      INNER JOIN gpifs as gpif
+              on gpif.date = m1.date
+      WHERE m1.time in ("09:00:00","11:00:00","12:30:00","14:30:00")
+        and m1.date > "2020-02-24"
+      union
+      SELECT "index" as meigaraCode,
+      		indices.date AS date,
+      		indices.time AS time,
+              indices.openingPrice as openingPrice,
+              indices.closingPrice as closingPrice,
+              indices.highPrice as highPrice,
+              indices.lowPrice as lowPrice,
+              indices.volume as volume,
+              "" AS todayOpening,
+              "" AS lastClosing,
+              "" as lastDate,
+              "" as lastTime,
+              "" as gpifETF,
+              indices.beforeRatio as beforeRatio,
+              indices.beforeRatioP as beforeRatioP,
+              "" as ETF
+      from indices
+      where indices.date > "2020-02-24"
+      order by date asc,meigaraCode asc,time asc
+      '));
+
+      dd($users);
+
+      //最大下界を求める正しいSQL
+      // SELECT m1.date AS m1date,
+      //  m1.time    AS m1time,
+      //  m1.closingPrice as m1c,
+      //  m2.closingPrice AS m2c
+      //  FROM meigaras as m1
+      //      LEFT OUTER JOIN meigaras as m2
+      //        ON m2.date = (SELECT MAX(m3.date)
+      //                                FROM meigaras as m3
+      //                               WHERE m3.date < m1.date and m3.time = "09:00:00")
+      //        and m2.time = "14:30:00"
+
+
       //①日銀のETF買いを取得（1306の12:30に結合）
-      $indexData = DB::table('indices')
-      ->select(DB::raw(' `index` as meigaraCode,date,"" as time,openingPrice,closingPrice,highPrice,lowPrice,"" as volume,"" as startPrice,beforeRatio,beforeRatioP,"" as ETF '));
+      // $indexData = DB::table('indices')
+      // ->select(DB::raw(' `index` as meigaraCode,date,"" as time,openingPrice,closingPrice,highPrice,lowPrice,"" as volume,"" as startPrice,"" as amClosingPrice,beforeRatio,befo  reRatioP,"" as ETF '));
 
       // なぜか　始まり値　＜　終値　のwhere を居れるとバグるのでviwe で実行
-      $test = DB::table('meigaras as m1')
-      ->select(DB::raw('m1.meigaraCode,m1.date,m1.time,m1.openingPrice,m1.closingPrice,m1.highPrice,m1.lowPrice,m1.volume,m2.openingPrice as startPrice,"" as beforeRatio,"" as beforeRatioP,gpifs.ETF'))
-      ->leftjoin('meigaras as m2', function($join){
-        $join->on('m1.date','=','m2.date')
-              ->where('m2.time','=','09:00:00');
-      })
-      ->leftjoin('gpifs', 'm1.date', '=', 'gpifs.date')
-      ->where('m1.time','=','09:00:00')
-      ->orwhere('m1.time','=','12:30:00')
-      ->orwhere('m1.time','=','14:30:00')
-      ;
-
-      $indexData2 = $indexData
-      ->where('date','>=','2020-02-24')
-      ->union($test)
-      ->orderby('date','asc')
-      ->orderby('meigaraCode','ASC')
-      ->orderby('time','asc')
-      ->get();
+      // $test = DB::table('meigaras as m1')
+      // ->select(DB::raw('m1.meigaraCode,m1.date,m1.time,m1.openingPrice,m1.closingPrice,m1.highPrice,m1.lowPrice,m1.volume,m2.openingPrice as startPrice,"" as amClosingPrice,"" as beforeRatio,"" as beforeRatioP,gpifs.ETF'))
+      // ->leftjoin('meigaras as m2', function($join){
+      //   $join->on('m1.date','=','m2.date')
+      //         ->where('m2.time','=','09:00:00');
+      // })
+      //ダメなやつだけど、これでいけると思ったんだけんどなぁ
+      // ->leftjoin('meigaras as m3', function($join2){
+      //   $join2->on('m3.date','=', function($join3){
+      //     $join3->from('meigaras as m4')
+      //     ->select(DB::raw('max(m4.date)'))
+      //     ->where('m4.date','<','m1.date');
+      //   })
+      //   ->where('m3.time','=','"14:30:00"');
+      // })
+      // ->leftjoin('gpifs', 'm1.date', '=', 'gpifs.date')
+      // ->where('m1.time','=','09:00:00')
+      // ->orwhere('m1.time','=','11:00:00')
+      // ->orwhere('m1.time','=','12:30:00')
+      // ->orwhere('m1.time','=','14:30:00')
+      // ;
+      //
+      // $indexData2 = $indexData
+      // ->where('date','>=','2020-02-24')
+      // ->union($test)
+      // ->orderby('date','asc')
+      // ->orderby('meigaraCode','ASC')
+      // ->orderby('time','asc')
+      // ->get();
 
       // dd($indexData2);
-
-
 
       // $GPIFData = DB::table('meigaras')
       // ->select(DB::raw('meigaras.meigaraCode,meigaras.date,meigaras.time,openingPrice,closingPrice,highPrice,lowPrice,meigaras.volume,"" as beforeRatio,"" as beforeRatioP,gpifs.ETF'))

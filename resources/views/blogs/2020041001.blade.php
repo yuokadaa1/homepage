@@ -1,6 +1,6 @@
 @extends('layouts.default')
 
-@section('title', 'GPIFの買い入れについて')
+@section('title', '日銀のETF買い入れについて')
 
 @section('content')
 
@@ -8,7 +8,7 @@
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/">TOP</a></li>
     <li class="breadcrumb-item"><a href="/blog">更新ブログ一覧</a></li>
-    <li class="breadcrumb-item">GPIFの買い入れについて</li>
+    <li class="breadcrumb-item">日銀のETF買い入れについて</li>
   </ol>
 </nav>
 
@@ -23,8 +23,187 @@
 
 
 <div class="container mb-4">
-  <h3>GPIFの買い入れについて</h3>
+  <h3>日銀のETF買い入れについて</h3>
 </div>
+
+
+<div class="container mb-4" id="1st">
+  <h5>日銀の買い入れと個人投資家の関係</h5>
+  <div  style="padding-left: 1em;">
+    <p class="my-2">
+      この事象が自分に利するかについて記載します。
+    </p>
+    <p class="my-2">
+      当然ですが、株価の予測は大変難しいです。
+      何か大きな経済ニュースが発生してもその事象は織り込み済として株価に反映されないことが多々あります。
+      その中で<u>日銀のETF買い</u>は比較的簡単に予測がつきやすい事象として扱われています。
+      一般的には以下２つが言われています。
+      <ul>
+        <li>アメリカの株価が下落した翌日</li>
+        <li>TOPIX（東証株価指数）が午前中に0.5％下落</li>
+      </ul>
+      その事象が本当なのか、この情報をもとに個人投資家として資産を増やすことが可能なのか確認します。
+    </p>
+  </div>
+</div>
+
+<div class="container mb-4" id="2nd">
+  <h5>日銀の買い入れの目的・公式見解</h5>
+  <div  style="padding-left: 1em;">
+    <p class="my-2">
+      日銀がETFを購入する理念は<a href="https://www.boj.or.jp/mopo/outline/qqe.htm/">日本銀行HP／金融政策</a>のページに記載されています。
+    </p>
+    <p class="my-2">
+      曰く「<u>物価の安定を図ることを通じて国民経済の健全な発展に資すること</u>」とのことです。
+      物価と株価の関係は<a href="">別ページ</a>に記載していますが、要は株価の上昇->金利の低下という式を通じて金利を下げようとするものです。金利が下がると借金の利息が下がって借金してくれる人が増え消費が増大するというもので、<a class="text-danger">株価の上昇->金利の低下->借金の増加->消費活動の増加->好景気化</a>の式を目指しているというわけですね。
+    </p>
+  </div>
+</div>
+
+<div class="container mb-4" id="3rd">
+  <h5>日銀の買い入れの実態・規模</h5>
+  <div  style="padding-left: 1em;">
+    <p class="mt-2">
+      日銀の買入総額は31兆円(2020年3月末までの累計)。東京証券市場（1部+2部）の上場株式総額が559兆円。
+    </p>
+    <p>
+      日銀は買い入れたETFをほとんど売却しないといわれているので東京証券市場の5.6%を日銀が保有していることになります。
+    </p>
+
+    <div class="mt-3">
+      <div class="img-fluid">
+        <p>図①_日銀の買入額</p>
+        <img src="{{ asset('images/日銀の買入額.png')}}" alt="①日銀の買入額" title="日銀の買入額" id="Graph1"  class="border">
+      </div>
+    </div>
+
+    <p class="my-2">
+      購入するETFは購入する証券会社により変わります。以下の銘柄になっています
+    </p>
+    <p >
+      野村証券は以下（<a href="https://nextfunds.jp/semi/article1-3.html">「日銀のETF買い入れについて」</a>より）。
+      <ul>
+        <li>1306　TOPIX上場投信</li>
+        <li>1321　日経225上場投信</li>
+        <li>1591　JPX日経400ETF</li>
+        <li>1480　企業価値ETF（設備・人材投資ETF枠）</li>
+        <li>2518　日本株女性活躍ETF（設備・人材投資ETF枠）</li>
+      </ul>
+    </p>
+    <p>
+      日興証券は以下（<a href="http://localhost:8000/blog/2020041001">「ETFのキホン」</a>より）。
+      <ul>
+        <li>1308 - 上場インデックスファンドＴＯＰＩＸ</li>
+        <li>1578 - 上場インデックスファンド日経２２５（ミニ）</li>
+        <li>1592 - 上場インデックスファンドJPX日経インデックス400</li>
+        <li>1481 - 上場インデックスファンド日本経済貢献株</li>
+      </ul>
+    </p>
+
+  </div>
+</div>
+
+<div class="container mb-4" id="3rd">
+  <h5>日銀の買入タイミングの検証</h5>
+  <div  style="padding-left: 1em;">
+    <p>
+      検証として、前日夜間にダウ平均株価が下がり
+    </p>
+
+    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#GraphA" aria-expanded="true" aria-controls="GraphA">ダウ平均と1306の株価を畳む／表示</button>
+
+    <div class="collapse show" id="GraphA">
+      <div class="card card-body">
+
+        <div class="bs-example">
+          @if (isset( $json ))
+            <div class="container">
+              <table class="table table-hover-responsive">
+
+                <tr class="thead-dark">
+                  <th>指標</th>
+                  <th>日時</th>
+                  <th>始値</th>
+                  <th>終値</th>
+                  <!-- <th>高値</th> -->
+                  <!-- <th>安値</th> -->
+                  <th>取引高</th>
+                  <th>日足始値</th>
+                  <th>午前終値</th>
+                  <th>DOW前日比</th>
+                  <th>DOW前日比%</th>
+                  <th>ETF購入(億円)</th>
+                </tr>
+
+                @foreach($json as $Data)
+                  @if ($Data->meigaraCode == "DJIA")
+                    <!-- <tr class="thead-light">
+                      <th>{{ $Data->meigaraCode }}</th>
+                      <th>{{ $Data->date }} {{ $Data->time }}</th>
+                      <th>{{ $Data->openingPrice }}</th>
+                      <th>{{ $Data->closingPrice }}</th> -->
+                      <!-- <th>{{ $Data->highPrice }}</th>
+                      <th>{{ $Data->lowPrice }}</th> -->
+                      <!-- <th>{{ $Data->volume }}</th>
+                      <th>{{ $Data->startPrice }}</th>
+                      <th>{{ $Data->amClosingPrice }}</th>
+                      <th>{{ $Data->beforeRatio }}</th>
+                      @if ($Data->beforeRatioP < 0)
+                        <th class="text-success">{{ $Data->beforeRatioP }}</th>
+                      @else
+                        <th>{{ $Data->beforeRatioP }}</th>
+                      @endif
+                      <th>{{ $Data->ETF }}</th>
+                    <tr> -->
+                  @else
+                    @if ($Data->time == "09:00:00")
+                    <tr >
+                      <td>{{ $Data->meigaraCode }}</td>
+                      <td>{{ $Data->date }} {{ $Data->time }}</td>
+                      @if ($Data->time == "09:00:00" and $Data->ETF <> "")
+                            <td class="text-success">{{ $Data->openingPrice }}</td>
+                      @else
+                        <td>{{ $Data->openingPrice }}</td>
+                      @endif
+                      @if ($Data->startPrice  + 10 < $Data->closingPrice and $Data->ETF <> "")
+                        <td class="text-danger">{{ $Data->closingPrice }}</td>
+                      @else
+                        <td>{{ $Data->closingPrice }}</td>
+                      @endif
+                      <!-- @if ($Data->startPrice  + 10 < $Data->highPrice and $Data->ETF <> "")
+                        <td class="text-danger">{{ $Data->highPrice }}</td>
+                      @else
+                        <td>{{ $Data->highPrice }}</td>
+                      @endif
+                      <td>{{ $Data->lowPrice }}</td> -->
+                      <td>{{ $Data->volume }}</td>
+                      <td>{{ $Data->startPrice }}</td>
+                      <td>{{ $Data->amClosingPrice }}</td>
+                      <td>{{ $Data->beforeRatio }}</td>
+                      <td>{{ $Data->beforeRatioP }}</td>
+                      @if ($Data->time == "09:00:00")
+                        @if ($Data->ETF <> "")
+                          <td  class="text-success">{{ $Data->ETF }}</td>
+                        @else
+                          <td >{{ $Data->ETF }}</td>
+                        @endif
+                      @else
+                        <td></td>
+                      @endif
+                    </tr>
+                    @endif
+                  @endif
+
+                @endforeach
+              </table>
+            </div>
+          @endif
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <div class="container mb-4" id="ZERO">
   <h5>GPIFの買い入れについて</h5>
@@ -39,110 +218,6 @@
   </div>
 </div>
 
-
-<div class="container mb-4" id="1st">
-  <h5>日銀の買い入れについて</h5>
-  <div  style="padding-left: 1em;">
-    <p class="my-2">
-      日銀の資産運用額はＸＸＸ。東京証券市場の上場株式総額がXXX円。
-      株式市場のX%を日銀が保有していることになります。
-    </p>
-    <p>
-      また、日銀がETFを購入する目的は「物価の安定を図ることを通じて国民経済の健全な発展に資すること」としています<a href="https://www.boj.or.jp/mopo/outline/qqe.htm/"></a>。
-      そのため、株価が下がりすぎて企業が買収されたり資本調達に失敗することを嫌がる＝株価の安定を図るという図式に則り、
-      株式を購入しています。
-    </p>
-    <p>
-      日銀はETFの購入で株式市場に参入しています。
-      日銀の購入するETFは以下の銘柄になっています（野村証券の公表しているもの）。
-      これらの出来高を時間単位で見てみましょう。
-
-      1306　TOPIX上場投信
-      1321　日経225上場投信
-      1591　JPX日経400ETF
-      1480　企業価値ETF（設備・人材投資ETF枠）
-      2518　日本株女性活躍ETF（設備・人材投資ETF枠）
-      https://www.boj.or.jp/mopo/measures/mkt_ope/index.htm/
-
-      野村の日銀オペ買い付け対象
-      https://nextfunds.jp/semi/article1-3.html
-
-
-      金融政策
-      （https://www.boj.or.jp/mopo/measures/mkt_ope/index.htm/）
-      オペレーション等
-      ・国庫短期証券売買オペ
-      ・指数連動型上場投資信託受益権等買入等
-
-
-      指数連動型上場投資信託受益権（ETF）および不動産投資法人投資口（J-REIT）の買入結果
-      https://www3.boj.or.jp/market/jp/menu_etf.htm
-
-      オペレーション（日次公表分）
-      https://www3.boj.or.jp/market/jp/menu_o.htm
-
-
-      1306（時間足）と日銀の買い入れには相関性が見られませんでした。
-      では米国指標(NYダウ30種)とはどうでしょうか。
-    </p>
-  </div>
-</div>
-
-
-<a>
-  {{$json[0]->meigaraCode}}
-  {{$json[1]->meigaraCode}}
-</a>
-
-@if (isset( $json ))
-  <div class="container">
-    <table class="table table-hover-responsive">
-      <tr class="thead-dark">
-        <th>指標</th>
-        <th>日時</th>
-        <th>始値</th>
-        <th>終値</th>
-        <th>高値</th>
-        <th>安値</th>
-        <th>取引高</th>
-        <th>DOW前日比</th>
-        <th>DOW前日比%</th>
-        <th>GPIF</th>
-      </tr>
-
-      @foreach($json as $Data)
-        @if ($Data->meigaraCode == "DJIA")
-          <tr class="thead-light">
-            <th>{{ $Data->meigaraCode }}</th>
-            <th>{{ $Data->date }} {{ $Data->time }}</th>
-            <th>{{ $Data->openingPrice }}</th>
-            <th>{{ $Data->closingPrice }}</th>
-            <th>{{ $Data->highPrice }}</th>
-            <th>{{ $Data->lowPrice }}</th>
-            <th>{{ $Data->volume }}</th>
-            <th>{{ $Data->beforeRatio }}</th>
-            <th>{{ $Data->beforeRatioP }}</th>
-            <th>{{ $Data->ETF }}</th>
-          <tr>
-        @else
-          <tr >
-            <td>{{ $Data->meigaraCode }}</td>
-            <td>{{ $Data->date }} {{ $Data->time }}</td>
-            <td>{{ $Data->openingPrice }}</td>
-            <td>{{ $Data->closingPrice }}</td>
-            <td>{{ $Data->highPrice }}</td>
-            <td>{{ $Data->lowPrice }}</td>
-            <td>{{ $Data->volume }}</td>
-            <td>{{ $Data->beforeRatio }}</td>
-            <td>{{ $Data->beforeRatioP }}</td>
-            <td>{{ $Data->ETF }}</td>
-          </tr>
-        @endif
-
-      @endforeach
-    </table>
-  </div>
-@endif
 
 
 @section('scripts')
