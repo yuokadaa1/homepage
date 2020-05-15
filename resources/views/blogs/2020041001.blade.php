@@ -129,7 +129,7 @@
                   <!-- <th>安値</th> -->
                   <th>取引高</th>
                   <th>日足始値</th>
-                  <th>午前終値</th>
+                  <th>前日終値</th>
                   <th>DOW前日比</th>
                   <th>DOW前日比%</th>
                   <th>ETF購入(億円)</th>
@@ -145,7 +145,7 @@
                       <!-- <th>{{ $Data->highPrice }}</th>
                       <th>{{ $Data->lowPrice }}</th> -->
                       <!-- <th>{{ $Data->volume }}</th>
-                      <th>{{ $Data->startPrice }}</th>
+                      <th>{{ $Data->todayOpening }}</th>
                       <th>{{ $Data->amClosingPrice }}</th>
                       <th>{{ $Data->beforeRatio }}</th>
                       @if ($Data->beforeRatioP < 0)
@@ -153,43 +153,36 @@
                       @else
                         <th>{{ $Data->beforeRatioP }}</th>
                       @endif
-                      <th>{{ $Data->ETF }}</th>
+                      <th>{{ $Data->BOJETF }}</th>
                     <tr> -->
                   @else
-                    @if ($Data->time == "09:00:00")
+                    @if ($Data->time == "11:00:00")
                     <tr >
                       <td>{{ $Data->meigaraCode }}</td>
                       <td>{{ $Data->date }} {{ $Data->time }}</td>
-                      @if ($Data->time == "09:00:00" and $Data->ETF <> "")
+                      @if ($Data->time == "09:00:00" and $Data->BOJETF <> "")
                             <td class="text-success">{{ $Data->openingPrice }}</td>
                       @else
                         <td>{{ $Data->openingPrice }}</td>
                       @endif
-                      @if ($Data->startPrice  + 10 < $Data->closingPrice and $Data->ETF <> "")
+                      @if ($Data->todayOpening  + 10 < $Data->closingPrice and $Data->BOJETF <> "")
                         <td class="text-danger">{{ $Data->closingPrice }}</td>
                       @else
                         <td>{{ $Data->closingPrice }}</td>
                       @endif
-                      <!-- @if ($Data->startPrice  + 10 < $Data->highPrice and $Data->ETF <> "")
+                      <!-- @if ($Data->todayOpening  + 10 < $Data->highPrice and $Data->BOJETF <> "")
                         <td class="text-danger">{{ $Data->highPrice }}</td>
                       @else
                         <td>{{ $Data->highPrice }}</td>
                       @endif
                       <td>{{ $Data->lowPrice }}</td> -->
                       <td>{{ $Data->volume }}</td>
-                      <td>{{ $Data->startPrice }}</td>
-                      <td>{{ $Data->amClosingPrice }}</td>
+                      <td>{{ $Data->todayOpening }}</td>
+                      <td>{{ $Data->lastClosing }}</td>
                       <td>{{ $Data->beforeRatio }}</td>
                       <td>{{ $Data->beforeRatioP }}</td>
-                      @if ($Data->time == "09:00:00")
-                        @if ($Data->ETF <> "")
-                          <td  class="text-success">{{ $Data->ETF }}</td>
-                        @else
-                          <td >{{ $Data->ETF }}</td>
-                        @endif
-                      @else
-                        <td></td>
-                      @endif
+                      <td >{{ $Data->BOJETF }}</td>
+                    
                     </tr>
                     @endif
                   @endif
