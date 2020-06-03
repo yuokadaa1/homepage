@@ -18,23 +18,17 @@
   <!-- Laravel 6.x laravel/uiを試そうとしたらinstallされてしまった。 -->
   <!-- https://blog.hrendoh.com/laravel-6-setup-bootstrap4-with-laravel-ui/ -->
   <title>{{ config('app.name', 'Laravel') }}</title>
-  <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <!-- Scripts -->
   <script src="{{ asset('js/app.js') }}" defer></script>
-  <!-- Fonts -->
   <link rel="dns-prefetch" href="//fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-  <!-- Styles -->
   <link href="{{ asset('css/app.css') }}" rel="stylesheet">
   <!-- Laravel 6.x laravel/uiを試そうとしたらinstallされてしまった。 -->
-
 
   <!-- 読込は下が先 -->
   <link href="{{ asset('css/homepage.css') }}" rel="stylesheet">
 
-
-  @yield('styles')
+@yield('styles')
 
 </head>
 <body>

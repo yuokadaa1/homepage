@@ -36,13 +36,11 @@
     <p class="my-2">
       当然ですが、株価の予測は大変難しいです。
       何か大きな経済ニュースが発生してもその事象は織り込み済として株価に反映されないことが多々あります。
-      その中で<u>日銀のETF買い</u>は比較的簡単に予測がつきやすい事象として扱われています。
-      一般的には以下２つが言われています。
+      その中で<u>日銀のETF買い</u>は比較的簡単に予測がつきやすい事象として扱われており、以下の事象がトリガーとされています。
       <ul>
-        <li>アメリカの株価が下落した翌日</li>
         <li>TOPIX（東証株価指数）が午前中に0.5％下落</li>
       </ul>
-      その事象が本当なのか、この情報をもとに個人投資家として資産を増やすことが可能なのか確認します。
+      この事象が本当なのか、この情報をもとに個人投資家として資産を増やすことが可能なのか確認します。
     </p>
   </div>
 </div>
@@ -78,7 +76,7 @@
     </div>
 
     <p class="my-2">
-      購入するETFは購入する証券会社により変わります。以下の銘柄になっています
+      購入するETFは購入する証券会社により変わり、以下の銘柄になっています
     </p>
     <p >
       野村証券は以下（<a href="https://nextfunds.jp/semi/article1-3.html">「日銀のETF買い入れについて」</a>より）。
@@ -107,9 +105,67 @@
   <h5>日銀の買入タイミングの検証</h5>
   <div  style="padding-left: 1em;">
     <p>
-      検証として、前日夜間にダウ平均株価が下がり
+      検証として、以下を確認しています。
     </p>
+    <ul>
+      <li>①午前中に0.5%下落した際に日銀のETF買いが発生するか</li>
+      <li>②午前中に0.5%下落なしの際に日銀のETF買いが発生しているか</li>
+    </ul>
+    <p>
+      まず、確認する営業日数は2020/2/20(水)～2020/4/21(火)の40営業日、うち日銀のETF買いの発生が22日。
+    </p>
+    <p>
+      ①0.5%下落した際の買いが17日、買いのなかったのが2日。②0.5%下落していない日の買いが5日、買いがなかったのが16日。
+    </p>
+    <p>
+      <a class="text-danger">結論としては、0.5%下落した午後は日銀がETFを買い入れる</a>には説得力があると思います。
+    </p>
+    <div>
+      <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#GraphB" aria-expanded="false" aria-controls="GraphB">図①と②</button>
 
+      <div class="mt-3">
+        <div class="row collapse hide" id="GraphB">
+          <!-- <div> -->
+            <div class="img-fluid">
+              <p>図①午前中に0.5%下落した際のETF買い有無</p>
+              <img src="{{ asset('images/2020041001_日経平均下落あり.png')}}" alt="①消費者物価指数" title="①消費者物価指数" id="GraphB1"  class="border">
+            </div>
+            <div class="img-fluid">
+              <p>図②午前中に0.5%下落なしの際のETF買い有無</p>
+              <img src="{{ asset('images/2020041001_日経平均下落なし.png')}}" alt="①消費者物価指数" title="①消費者物価指数" id="GraphB2"  class="border">
+            </div>
+          <!-- </div> -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="container mb-4" id="3rd">
+    <h5>日銀のETF買いを個人投資家が利用できるか</h5>
+    <div  style="padding-left: 1em;">
+      <p>
+        ようやく本題です。日銀のETF買いのタイミングに説得力を感じたところで、これが利用できるかです。
+      </p>
+      <p>
+        図④を確認してください。これは日銀のETF買いの発生した際に、午前の終値と比較して1306の銘柄が高くなっているかを確認しました<a href= "https://ja.wikipedia.org/wiki/%E7%AE%B1%E3%81%B2%E3%81%92%E5%9B%B3">はこ髭図(はこ髭図の説明はwikipediaを参照してください)</a>です。日銀がETFを購入した際の日付ごとの前日終値と午後以降の高値との差額です（横軸：日付、縦軸：午後以降30分足の高値-前日終値）。
+      </p>
+      <p>
+        <a class="text-danger">日銀がETFを買い入れた午後は平均値10.71円、中央値7円で上昇しています</a>
+      </p>
+      <p>
+        2020/4/21現在、集計した期間の1306の株価が1487円なので午前終わり直前に買い->7円上昇後に売りを繰り返すだけで0.47%増え続ける可能性がありますね。わかりやすい割には意外と高パフォーマンスですね（※コツコツドカンの名言がありますので、持ち越しの判断がつかないうちは多少の損が出ても当日中に売り払うことをお薦めします）。検証に使用したデータは下のほうに「ダウ平均と1306の株価」として張り付けてあります。
+      </p>
+      <div class="img-fluid">
+        <div class="mt-2">
+          <p>図④午前中に0.5%下落なしの際のETF買い有無</p>
+          <img src="{{ asset('images/2020041001_ETF買い時の午前終値との比較.png')}}" alt="①消費者物価指数" title="①消費者物価指数" id="GraphB2"  class="border">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
     <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#GraphA" aria-expanded="true" aria-controls="GraphA">ダウ平均と1306の株価を畳む／表示</button>
 
     <div class="collapse show" id="GraphA">
@@ -125,68 +181,36 @@
                   <th>日時</th>
                   <th>始値</th>
                   <th>終値</th>
-                  <!-- <th>高値</th> -->
-                  <!-- <th>安値</th> -->
                   <th>取引高</th>
                   <th>日足始値</th>
                   <th>前日終値</th>
-                  <th>DOW前日比</th>
-                  <th>DOW前日比%</th>
+                  <th>午前終値</th>
                   <th>ETF購入(億円)</th>
                 </tr>
 
                 @foreach($json as $Data)
                   @if ($Data->meigaraCode == "DJIA")
-                    <!-- <tr class="thead-light">
-                      <th>{{ $Data->meigaraCode }}</th>
-                      <th>{{ $Data->date }} {{ $Data->time }}</th>
-                      <th>{{ $Data->openingPrice }}</th>
-                      <th>{{ $Data->closingPrice }}</th> -->
-                      <!-- <th>{{ $Data->highPrice }}</th>
-                      <th>{{ $Data->lowPrice }}</th> -->
-                      <!-- <th>{{ $Data->volume }}</th>
-                      <th>{{ $Data->todayOpening }}</th>
-                      <th>{{ $Data->amClosingPrice }}</th>
-                      <th>{{ $Data->beforeRatio }}</th>
-                      @if ($Data->beforeRatioP < 0)
-                        <th class="text-success">{{ $Data->beforeRatioP }}</th>
-                      @else
-                        <th>{{ $Data->beforeRatioP }}</th>
-                      @endif
-                      <th>{{ $Data->BOJETF }}</th>
-                    <tr> -->
                   @else
-                    @if ($Data->time == "11:00:00")
-                    <tr >
+                    @if ($Data->time == "09:00:00")
+                      <tr class="table-primary">
+                    @else
+                      <tr >
+                    @endif
                       <td>{{ $Data->meigaraCode }}</td>
                       <td>{{ $Data->date }} {{ $Data->time }}</td>
-                      @if ($Data->time == "09:00:00" and $Data->BOJETF <> "")
-                            <td class="text-success">{{ $Data->openingPrice }}</td>
-                      @else
-                        <td>{{ $Data->openingPrice }}</td>
-                      @endif
-                      @if ($Data->todayOpening  + 10 < $Data->closingPrice and $Data->BOJETF <> "")
-                        <td class="text-danger">{{ $Data->closingPrice }}</td>
-                      @else
-                        <td>{{ $Data->closingPrice }}</td>
-                      @endif
-                      <!-- @if ($Data->todayOpening  + 10 < $Data->highPrice and $Data->BOJETF <> "")
-                        <td class="text-danger">{{ $Data->highPrice }}</td>
-                      @else
-                        <td>{{ $Data->highPrice }}</td>
-                      @endif
-                      <td>{{ $Data->lowPrice }}</td> -->
+                      <td>{{ $Data->openingPrice }}</td>
+                      <td>{{ $Data->closingPrice }}</td>
                       <td>{{ $Data->volume }}</td>
                       <td>{{ $Data->todayOpening }}</td>
                       <td>{{ $Data->lastClosing }}</td>
-                      <td>{{ $Data->beforeRatio }}</td>
-                      <td>{{ $Data->beforeRatioP }}</td>
-                      <td >{{ $Data->BOJETF }}</td>
-                    
+                      <td>{{ $Data->amClosing }}</td>
+                      @if ($Data->time == "12:30:00")
+                        <td >{{ $Data->BOJETF }}</td>
+                      @else
+                        <td></td>
+                      @endif
                     </tr>
-                    @endif
                   @endif
-
                 @endforeach
               </table>
             </div>

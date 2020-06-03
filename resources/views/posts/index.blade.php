@@ -15,9 +15,10 @@
   <div class="container">
     <div class="form-group">
       <ul>
-        <li><a href={{ url("/blog/2020032301") }}>2020/03/22　初心者向けの投資について</a></li>
+        <li><a href={{ url("/blog/2020032301") }}>2020/03/22　初心者の投資について</a></li>
         <li><a href={{ url("/blog/2020040601") }}>2020/04/06　各国市場のオープン時刻について</a></li>
         <li><a href={{ url("/blog/2020041001") }}>2020/04/10　日銀のETF買い入れについて</a></li>
+        <li><a href={{ url("/blog/2020052701") }}>2020/05/27　FX証拠金</a></li>
       </ul>
     </div>
   </div>

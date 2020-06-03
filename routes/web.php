@@ -20,6 +20,7 @@ Route::get('/', 'PostsController@index');
 Route::get('/blog', 'PostsController@blog');
 //ブログ個別ページ
 Route::get('/blog/{id}','PostsController@blogDetail');
+Route::post('/blog/{id}','PostsController@blogDetailP');
 
 //DB更新用の処理（一覧）
 Route::get('/admin', 'AdminController@update');
@@ -39,16 +40,15 @@ Route::post('/python', 'ExecController@executePython');
 
 
 
-
 // ここから使っていないコピー元の処理？
 // Route::get('/posts/{post}', 'PostsController@show')->where('post','[0-9]+');
-Route::get('/posts/create', 'PostsController@create');
-Route::post('/posts', 'PostsController@store');
-Route::get('/posts/{post}/edit', 'PostsController@edit');
-Route::patch('/posts/{post}', 'PostsController@update');
-Route::delete('/posts/{post}', 'PostsController@destroy');
-Route::post('/posts/{post}/comments', 'CommentsController@store');
-Route::delete('/posts/{post}/comments/{comment}', 'CommentsController@destroy');
+// Route::get('/posts/create', 'PostsController@create');
+// Route::post('/posts', 'PostsController@store');
+// Route::get('/posts/{post}/edit', 'PostsController@edit');
+// Route::patch('/posts/{post}', 'PostsController@update');
+// Route::delete('/posts/{post}', 'PostsController@destroy');
+// Route::post('/posts/{post}/comments', 'CommentsController@store');
+// Route::delete('/posts/{post}/comments/{comment}', 'CommentsController@destroy');
 
 Auth::routes();
 
