@@ -32,17 +32,33 @@
         <div class="form-inline">
           <label class="col-sm-3 control-label" for="username">通貨ペア</label>
           <select class="form-control" id="selectPair" name="selectPair">
-             <option value="0" selected>USD/JPY</option>
-             <option value="1">USD/KRW</option>
-             <option value="2">GBP/USD</option>
-             <option value="3">GBP/JPY</option>
+            @for ($i = 0; $i < count($json); $i++)
+              @empty( $requestD )
+                @if ( $json[$i]['cid'] == 0 )
+                  <option value={{ $json[$i]['cid'] }} selected> {{ $json[$i]['currency'] }} </option>
+                @else
+                  <option value={{ $json[$i]['cid'] }}> {{ $json[$i]['currency'] }} </option>
+                @endif
+              @else
+                @if ( $json[$i]['cid'] == $requestD->selectPair )
+                  <option value={{ $json[$i]['cid'] }} selected> {{ $json[$i]['currency'] }} </option>
+                @else
+                  <option value={{ $json[$i]['cid'] }}> {{ $json[$i]['currency'] }} </option>
+                @endif
+              @endempty
+            @endfor
           </select>
         </div>
 
         <div class="form-inline">
           <label class="col-sm-3 control-label">レート</label>
-          <input type="number" step="0.001" class="col-sm-2 form-control" id="inputRate" value='{{old('name', $json[0]["price"])}}'>
-          <!-- <input type="submit" id="button1" value="現在のレート" class="btn btn-success btn-wide" /> -->
+          <input type="number" step="0.001" class="col-sm-2 form-control" id="inputRate" name="inputRate"
+            @isset( $requestD )
+              value='{{ old("inputRate", $requestD->inputRate) }}'>
+            @else
+              value='{{ old("inputRate", $json[0]["price"])}}'>
+            @endisset
+          <input type="submit" name="button2" value="現在のレートを取得" class="btn btn-success btn-wide" />
         </div>
 
         <!-- JavaScriptを呼び出してレートの現在値をセット。 -->
@@ -51,25 +67,50 @@
 
         <div class="form-inline">
           <label class="col-sm-3 control-label">純資産額</label>
-          <input type="number" step="100000" id="netAssets" name="numNetAssets" class="col-sm-2 form-control" value='{{old('name', 1000000)}}'>
+          <input type="number" step="100000" id="numNetAssets" name="numNetAssets" class="col-sm-2 form-control"
+            @isset( $requestD )
+              value='{{ old('name', $requestD->numNetAssets) }}'>
+            @else
+              value='{{ old('name', 1000000) }}'>
+            @endisset
         </div>
 
         <div class="form-inline">
           <label class="col-sm-3 control-label">売買</label>
           <select class="form-control" id="selBuySell" name="selBuySell">
-             <option value="0" selected>買</option>
-             <option value="1">売</option>
+            @empty( $requestD )
+              <option value="0" selected>買</option>
+              <option value="1">売</option>
+            @else
+              @if ( $requestD->selBuySell == 0 )
+                <option value="0" selected>買</option>
+                <option value="1">売</option>
+              @else
+                <option value="0">買</option>
+                <option value="1" selected>売</option>
+              @endif
+            @endisset
           </select>
         </div>
 
         <div class="form-inline">
           <label class="col-sm-3 control-label" for="username">最大レバレッジ</label>
           <select class="form-control" id="selLeverage" name="selLeverage">
-             <option value="0" selected>25</option>
-             <option value="1">50</option>
-             <option value="2">100</option>
-             <option value="3">200</option>
-             <option value="4">400</option>
+            @foreach(config('20200527_selLeverage') as $index => $name)
+              @empty( $requestD )
+                @if ( $index == 0 )
+                  <option value="{{ $index }}" selected> {{ $name }} </option>
+                @else
+                  <option value="{{ $index }}"> {{ $name }} </option>
+                @endif
+              @else
+                @if ( $index == $requestD->selLeverage )
+                  <option value="{{ $index }}" selected> {{ $name }} </option>
+                @else
+                  <option value="{{ $index }}"> {{ $name }} </option>
+                @endif
+              @endempty
+            @endforeach
           </select>
           <p>倍</p>
         </div>
@@ -83,19 +124,31 @@
         <div class="form-inline">
           <label class="col-sm-3 control-label">ロスカット証拠金維持率</label>
           <select class="form-control" id="selMaintenanceRate" name="selMaintenanceRate">
-             <option value="0" selected>10</option>
-             <option value="1">20</option>
-             <option value="2" selected>30</option>
-             <option value="3">40</option>
-             <option value="4">50</option>
-             <option value="5">60</option>
-             <option value="6">70</option>
-             <option value="7">80</option>
-             <option value="8">90</option>
-             <option value="9">100</option>
+            @foreach(config('20200527_selMaintenanceRate') as $index => $name)
+              @empty( $requestD )
+                @if ( $index == 9 )
+                  <option value="{{ $index }}" selected> {{ $name }} </option>
+                @else
+                  <option value="{{ $index }}"> {{ $name }} </option>
+                @endif
+              @else
+                @if ( $index == $requestD->selMaintenanceRate )
+                  <option value="{{ $index }}" selected> {{ $name }} </option>
+                @else
+                  <option value="{{ $index }}"> {{ $name }} </option>
+                @endif
+              @endempty
+            @endforeach
           </select>
           <p>%</p>
         </div>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">スワップポイント（IG証券）</label>
+          <text  class="col-sm-3 "></text>
+          <p>円</p>
+        </div>
+
 
         <input type="submit" name="button1" value="計算開始" class="btn btn-success btn-wide" />
 
@@ -104,18 +157,34 @@
   </div>
 
   <h5>計算結果</h5>
-  <div class="form-inline">
-    <label class="col-sm-3 control-label">必要証拠金</label>
-    <text  class="col-sm-3 ">aaa</text>
-  </div>
-  <div class="form-inline">
-    <label class="col-sm-3 control-label">ロスカット基準額</label>
-    <text  class="col-sm-3 ">aaa</text>
-  </div>
-  <div class="form-inline">
-    <label class="col-sm-3 control-label">スワップポイント</label>
-    <text  class="col-sm-3 ">aaa</text>
-  </div>
+  @isset( $json2 )
+    @empty ( $requestD->button2 )
+      <div class="form-inline">
+        <label class="col-sm-3 control-label">合計必要証拠金</label>
+        <text  class="col-sm-3 ">{{ number_format( $json2["requiredMargin"] ) }}</text>
+        <p>円</p>
+      </div>
+      <div class="form-inline">
+        <label class="col-sm-3 control-label">ロスカット基準額</label>
+        <text  class="col-sm-3 ">{{ number_format( $json2["remainderMoney"] ) }}</text>
+        <p>円</p>
+      </div>
+      <div class="form-inline">
+        <label class="col-sm-3 control-label">ロスカット発生レート</label>
+        <text  class="col-sm-3 ">{{ $json2["lossCutRate"] }}</text>
+        <p>円</p>
+      </div>
+      <div class="form-inline">
+        <label class="col-sm-3 control-label">ロスカット発生pips</label>
+        <text  class="col-sm-3 ">{{ $json2["remainderpips"] }}</text>
+        <p>pips</p>
+      </div>
+      <div class="form-inline">
+        <label class="col-sm-3 control-label">スワップポイント</label>
+        <text  class="col-sm-3 ">aaa</text>
+      </div>
+    @endempty
+  @endisset
 
 </div>
 

@@ -22,6 +22,7 @@ class PostsController extends Controller
       return view('posts.index');
     }
 
+    // getで呼ばれた時用のfunction
     public function blogDetail($id) {
 
       switch ($id) {
@@ -37,13 +38,19 @@ class PostsController extends Controller
 
     }
 
+    // postで呼ばれた時用のfunction
     public function blogDetailP($id,Request $request) {
 
       switch ($id) {
         case "2020052701":
           $arrayData = $this->b2020052701($request);
-          $arrayData2 = $this->b2020052702($request,$arrayData);
-          return view('blogs.' . $id)->with('json',$arrayData);
+          // button2で呼ばれた時はレートの再取得のみ。
+          if($request->button2 <> ""){
+            $arrayData2 = "";
+          }else{
+            $arrayData2 = $this->b2020052702($request,$arrayData);
+          }
+          return view('blogs.' . $id)->with(['json'=>$arrayData,'json2'=>$arrayData2,'requestD'=>$request]);
         default:
           return view('blogs.' . $id);
       }
@@ -112,19 +119,20 @@ class PostsController extends Controller
     }
 
     private function b2020052701(){
-      $data = "https://spreadsheets.google.com/feeds/list/1BLvpJeMemQK_WA6mCBkonMVWOjv9xhGGrihMaAa2hFs/od6/public/values?alt=json";
+      $url = "https://spreadsheets.google.com/feeds/list/1BLvpJeMemQK_WA6mCBkonMVWOjv9xhGGrihMaAa2hFs/od6/public/values?alt=json";
 
-      $json = file_get_contents($data);
+      $json = file_get_contents($url);
       $json_decode = json_decode($json);
       $names = $json_decode->feed->entry;
 
       $json = array();
       foreach ($names as $name) {
-          $excel['currency'] = $name->{'gsx$currency'}->{'$t'};;
-          $excel['price'] = $name->{'gsx$price'}->{'$t'};
-          $excel['time'] = $name->{'gsx$time'}->{'$t'};
-          $excel['change'] = $name->{'gsx$change'}->{'$t'};
-          array_push($json, $excel);
+        $excel['cid'] = $name->{'gsx$cid'}->{'$t'};;
+        $excel['currency'] = $name->{'gsx$currency'}->{'$t'};;
+        $excel['price'] = $name->{'gsx$price'}->{'$t'};
+        $excel['time'] = $name->{'gsx$time'}->{'$t'};
+        $excel['change'] = $name->{'gsx$change'}->{'$t'};
+        array_push($json, $excel);
       }
 
       return $json;
@@ -144,21 +152,22 @@ class PostsController extends Controller
 
         // 必要証拠金額　= 購入Lot(入力欄 * 100) * レート / レバレッジ倍率
         $requiredMargin = $request->numAmount * 100 * $arrayData[$request->selectPair]["price"] / 25;
-        // ロスカット発生までの金額 = 総資産 - 必要証拠金
+        // ロスカット基準額 = 総資産 - 必要証拠金
         $remainderMoney = $request->numNetAssets - $requiredMargin;
         // ロスカット発生までのpips ロスカット発生までの金額 / 保有数量
         $remainderpips = $remainderMoney / ($request->numAmount * 100);
         // ロスカット発生のレート金額
         if($request->selectPair == 0){
           // 買いの場合
-          $lossCutRate = $arrayData[$request->selectPair]["price"] - $remainderpips;
+          $lossCutRate = $arrayData[$request->selectPair]["price"] + $remainderpips;
         }else{
           // 売りの場合
-          $lossCutRate = $arrayData[$request->selectPair]["price"] + $remainderpips;
+          $lossCutRate = $arrayData[$request->selectPair]["price"] - $remainderpips;
         }
-
-        dd($lossCutRate);
-
+        $json["requiredMargin"] = $requiredMargin;
+        $json["remainderMoney"] = $remainderMoney;
+        $json["remainderpips"] = $remainderpips;
+        $json["lossCutRate"] = $lossCutRate;
 
       }else{
         dd("大失敗");
