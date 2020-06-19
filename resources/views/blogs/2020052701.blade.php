@@ -144,11 +144,9 @@
         </div>
 
         <div class="form-inline">
-          <label class="col-sm-3 control-label">スワップポイント（IG証券）</label>
-          <text  class="col-sm-3 "></text>
-          <p>円</p>
+          <label class="col-sm-3 control-label">決済レート</label>
+          <input type="number" step="100000" id="numSettlement" name="numSettlement" class="col-sm-2 form-control" />
         </div>
-
 
         <input type="submit" name="button1" value="計算開始" class="btn btn-success btn-wide" />
 
@@ -181,7 +179,18 @@
       </div>
       <div class="form-inline">
         <label class="col-sm-3 control-label">スワップポイント</label>
-        <text  class="col-sm-3 ">aaa</text>
+        <text  class="col-sm-3 ">{{ $json2["swapPoint"] }}</text>
+        <p>円</p>
+      </div>
+      <div class="form-inline">
+        <label class="col-sm-3 control-label">1pips変動時のレート</label>
+        <text  class="col-sm-3 ">1pips変動時のレート</text>
+        <p>円</p>
+      </div>
+      <div class="form-inline">
+        <label class="col-sm-3 control-label">決済レート時の損益</label>
+        <text  class="col-sm-3 ">決済レート時の損益</text>
+        <p>円</p>
       </div>
     @endempty
   @endisset

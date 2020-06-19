@@ -64,6 +64,7 @@ class GetSwapRateCommand extends Command
         $position = array();
         $swapYMD = 0;
         $nextGetColumn = "";
+        $nextGetColumn2 = "";
 
         foreach ($sheet->getRowIterator() as $i => $row) {
             $row_data = [];
@@ -93,10 +94,18 @@ class GetSwapRateCommand extends Command
               // 最終行（最新のスワップポイントの格納位置）のみデータを取得
               if($i == $max_row_tmp){
 
+                // Longの次行がrollDaysなので、shortを格納した次の行でLongを格納
+                if ( $nextGetColumn2 <> ""){
+                  $swapPointdata["rollDays"] = $cell->getValue();
+                  $swapPoint[$nextGetColumn2] = $swapPointdata;
+                  $nextGetColumn2 = "";
+                }
+
                 // shortの次行がLongなので、shortを格納した次の行でLongを格納
                 if ( $nextGetColumn <> ""){
                   $swapPointdata["swapPointLong"] = $cell->getValue();
                   $swapPoint[$nextGetColumn] = $swapPointdata;
+                  $nextGetColumn2 = $nextGetColumn;
                   $nextGetColumn = "";
                 }
 

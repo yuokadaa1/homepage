@@ -132,6 +132,10 @@ class PostsController extends Controller
         $excel['price'] = $name->{'gsx$price'}->{'$t'};
         $excel['time'] = $name->{'gsx$time'}->{'$t'};
         $excel['change'] = $name->{'gsx$change'}->{'$t'};
+        $excel['swapPointShort'] = $name->{'gsx$swappointshort'}->{'$t'};
+        $excel['swapPointLong'] = $name->{'gsx$swappointlong'}->{'$t'};
+        $excel['rollDays'] = $name->{'gsx$rolldays'}->{'$t'};
+        $excel['updateDateS'] = $name->{'gsx$updatedates'}->{'$t'};
         array_push($json, $excel);
       }
 
@@ -160,14 +164,17 @@ class PostsController extends Controller
         if($request->selectPair == 0){
           // 買いの場合
           $lossCutRate = $arrayData[$request->selectPair]["price"] + $remainderpips;
+          $swapPoint = $arrayData[$request->selectPair]["swapPointLong"];
         }else{
           // 売りの場合
           $lossCutRate = $arrayData[$request->selectPair]["price"] - $remainderpips;
+          $swapPoint = $arrayData[$request->selectPair]["swapPointShort"];
         }
         $json["requiredMargin"] = $requiredMargin;
         $json["remainderMoney"] = $remainderMoney;
         $json["remainderpips"] = $remainderpips;
         $json["lossCutRate"] = $lossCutRate;
+        $json["swapPoint"] = $swapPoint;
 
       }else{
         dd("大失敗");
