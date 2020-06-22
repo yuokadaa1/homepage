@@ -20,7 +20,7 @@ class AdminController extends Controller
   {
     switch ($kbn) {
       case "meigara":
-          $this->meigaraUpdate();
+          $this->meigaraUpdate($request);
           break;
       case "index":
           $this->indexUpdate($request);
@@ -29,17 +29,17 @@ class AdminController extends Controller
     return view('admin.update');
   }
 
-  private function meigaraUpdate(){
+  private function meigaraUpdate(Request $request){
 
-    //～ここからcontroller内で作成した時の処理。一応保存しておく。
-    //
-    //なんやかやデータ操作しないとそのまま読み込めなかった。json_decodeで処理できないものが含まれていた。
-    // ''を""に、""なしデータを""ありデータに
-    // https://chaika.hatenablog.com/entry/2017/07/01/080000
-    // 2020041001の時はjsonデータを読み込む→配列に格納
-    // $jsonData = Storage::get('public/20200416_1306_T.csv');
-    $jsonData = Storage::get('public/20200421_1306_T.csv');
-    $arrayJson = json_decode($jsonData,true);
+    // 'csv_file' はビューの inputタグのname属性
+    $uploaded_file = $request->file('csv_file');
+    // アップロードしたファイルの絶対パスを取得
+    $file_path = $request->file('csv_file')->path($uploaded_file);
+    //SplFileObjectを生成
+    $file = new SplFileObject($file_path);
+    //SplFileObject::READ_CSV が最速らしい
+    $file->setFlags(SplFileObject::READ_CSV);
+    $arrayJson = json_decode($file,true);
 
     // unixタイムスタンプを日本時間に変換する。
     date_default_timezone_set('Asia/Tokyo');
@@ -50,21 +50,23 @@ class AdminController extends Controller
       // $value = date('Ymd H:i', ($value / 1000));
     }
 
+    // dd($arrayJson);
+
     for($i = 0; $i < count($arrayJson["timestamp"]) ; $i++){
       // viewで拾えるように[key1:[],key2:[],key3[]の形を][[key1:,key2:,key3],[key1:,key2:,key3]...に修正]
-      $array["timestamp"] = $arrayJson["timestamp"][$i];
-      $array["high"] = $arrayJson["high"][$i];
-      $array["low"] = $arrayJson["low"][$i];
-      $array["open"] = $arrayJson["open"][$i];
-      $array["close"] = $arrayJson["close"][$i];
-      $array["volume"] = $arrayJson["volume"][$i];
-      $arrayData[] = $array;
-      array_push($arrayData,$array);
+      // $array["timestamp"] = $arrayJson["timestamp"][$i];
+      // $array["high"] = $arrayJson["high"][$i];
+      // $array["low"] = $arrayJson["low"][$i];
+      // $array["open"] = $arrayJson["open"][$i];
+      // $array["close"] = $arrayJson["close"][$i];
+      // $array["volume"] = $arrayJson["volume"][$i];
+      // $arrayData[] = $array;
+      // array_push($arrayData,$array);
 
       //解析用にデータを格納
       Meigara::unguard(); // セキュリティー解除
       $meigara = Meigara::updateOrCreate(
-        ['meigaraCode' => "1306",
+        ['meigaraCode' => $arrayJson["meigaraCode"][0],
         'meigaraCodeA' => '',
         'date' => substr($arrayJson["timestamp"][$i],0,10),   //yyyy-mm-dd hh:ii
         'time' => substr($arrayJson["timestamp"][$i],11,5)],  //0123-56-89 BC:EF
@@ -77,9 +79,6 @@ class AdminController extends Controller
        ]
       );
      Meigara::reguard(); // セキュリティーを再設定
-
-    //～ここまでcontroller内で作成した時の処理。一応保存しておく。
-
 
     }
 
