@@ -18,6 +18,14 @@
 
 <div class="container mb-4" id="1st">
 
+  <h5>作ろうとしていたのですが、悲しいかなすでに優良なものがwebに公開されていました</h5>
+  <div class="container">
+    <p>https://ufocatch.com/</p>
+    <p>のサイトを見てください。</p>
+    <p>個社の検討ができても企業間の比較がしづらいようなので気が向いたら当サイトで</p>
+    <p>作ろうかとは思いますが、優先度は低めです。</p>
+  </div>
+  
   <h5>入力パラメータ</h5>
 
   <div  style="padding-left: 1em;">
@@ -30,26 +38,94 @@
       <div class="form-group">
 
         <div class="form-inline">
-          <label class="col-sm-3 control-label" for="username">通貨ペア</label>
-          <select class="form-control" id="selectPair" name="selectPair">
-            @for ($i = 0; $i < count($json); $i++)
-              @empty( $requestD )
-                @if ( $json[$i]['cid'] == 0 )
-                  <option value={{ $json[$i]['cid'] }} selected> {{ $json[$i]['currency'] }} </option>
-                @else
-                  <option value={{ $json[$i]['cid'] }}> {{ $json[$i]['currency'] }} </option>
-                @endif
-              @else
-                @if ( $json[$i]['cid'] == $requestD->selectPair )
-                  <option value={{ $json[$i]['cid'] }} selected> {{ $json[$i]['currency'] }} </option>
-                @else
-                  <option value={{ $json[$i]['cid'] }}> {{ $json[$i]['currency'] }} </option>
-                @endif
-              @endempty
-            @endfor
-          </select>
+          <label class="col-sm-3 control-label">会社番号</label>
+          <input type="number" step="1" class="col-sm-2 form-control" id="inputRate" name="inputRate"
+            @isset( $requestD )
+              value='{{ old("inputRate", $requestD->inputRate) }}'>
+            @else
+              '>
+            @endisset
         </div>
 
+        <label class="col-sm-3 control-label">貸借対照表（資産の部）</label>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">資産合計</label>
+          <input type="number" step="1" class="col-sm-2 form-control" id="inputRate" name="inputRate" />
+        </div>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">流動資産</label>
+          <input type="number" step="1" class="col-sm-2 form-control" id="inputRate" name="inputRate" />
+        </div>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">当座資産</label>
+          <input type="number" step="1" class="col-sm-2 form-control" id="inputRate" name="inputRate" />
+        </div>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">固定資産</label>
+          <input type="number" step="1" class="col-sm-2 form-control" id="inputRate" name="inputRate" />
+        </div>
+
+        <label class="col-sm-3 control-label">貸借対照表（負債の部）</label>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">負債合計</label>
+          <input type="number" step="1" class="col-sm-2 form-control" id="inputRate" name="inputRate" />
+        </div>
+
+        <label class="col-sm-3 control-label">貸借対象表（純資産の部）</label>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">純資産合計</label>
+          <input type="number" step="1" class="col-sm-2 form-control" id="inputRate" name="inputRate" />
+        </div>
+
+        <label class="col-sm-3 control-label">損益計算書</label>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">売上高</label>
+          <input type="number" step="1" class="col-sm-2 form-control" id="inputRate" name="inputRate" />
+        </div>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">売上原価</label>
+        </div>
+        <input type="number" step="1" class="col-sm-2 form-control" id="inputRate" name="inputRate" />
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">営業利益</label>
+          <input type="number" step="1" class="col-sm-2 form-control" id="inputRate" name="inputRate" />
+        </div>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">営業外収益</label>
+          <input type="number" step="1" class="col-sm-2 form-control" id="inputRate" name="inputRate" />
+        </div>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">営業外費用</label>
+          <input type="number" step="1" class="col-sm-2 form-control" id="inputRate" name="inputRate" />
+        </div>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">当期純利益</label>
+          <input type="number" step="1" class="col-sm-2 form-control" id="inputRate" name="inputRate" />
+        </div>
+
+        <label class="col-sm-3 control-label">キャッシュフロー計算書</label>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">営業ＣＦ</label>
+          <input type="number" step="1" class="col-sm-2 form-control" id="inputRate" name="inputRate" />
+        </div>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">投資ＣＦ</label>
+          <input type="number" step="1" class="col-sm-2 form-control" id="inputRate" name="inputRate" />
+        </div>
 
         <input type="submit" name="button1" value="計算開始" class="btn btn-success btn-wide" />
 

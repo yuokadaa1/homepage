@@ -15,6 +15,7 @@
   <div class="container">
     <div class="form-group">
       <ul>
+
         <li><a href={{ url("/blog/2020032301") }}>2020/03/21　初心者の投資について</a></li>
         <li><a href={{ url("/blog/2020040601") }}>2020/04/06　各国市場のオープン時刻について</a></li>
         <li><a href={{ url("/blog/2020041001") }}>2020/04/10　日銀のETF買い入れについて</a></li>
@@ -24,41 +25,13 @@
         <li><a href={{ url("/blog/2020061801") }}>2020/06/18　寄り付きを狙う</a></li>
         <li><a href={{ url("/blog/2020061901") }}>2020/06/19　決算資料の読み方</a></li>
         <li><a href={{ url("/blog/2020062201") }}>2020/06/22　決算書指標計算シミュレータ</a></li>
+        <li><a href={{ url("/blog/2020062301") }}>2020/06/23　流れの変わり目について</a></li>
+        <li><a href={{ url("/blog/2020062601") }}>2020/06/26　通貨の相関について</a></li>
+
       </ul>
     </div>
   </div>
 
-
-
-  <!-- <div class="container">
-    <div class="form-group">
-      <div class="form-inline box" data-formno="0">
-        <label class="col-sm-3 control-label" for="username">登録する写真：</label>
-        <lavel class="no">1</lavel>
-        <input type="file" id="file" name="input[0]" class="col-sm-4 form-control namae">
-        <a class="btn btn-primary addformbox">追加</a>
-        <a class="btn btn-warning deletformbox">削除</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10 text-center">
-      <input type="submit" name="button1" value="送信" class="btn btn-success btn-wide" />
-    </div>
-  </div> -->
-
-<!-- モデル情報の表示 -->
-<!-- <form class="form-horizontal">
-  <p class="text-center bg-info">登録済み情報</p>
-  <table class="table table-striped">
-    <thead>
-      <tr><th scope="col">モデルＩＤ</th><th scope="col">モデル名</th><th scope="col">写真数</th></tr>
-     </thead>
-     <tbody>
-     </tbody>
-   </table>
-</form> -->
 
 @section('scripts')
     <!-- <script src="/js/starter-template.js"></script> -->
