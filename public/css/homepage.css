@@ -21,6 +21,7 @@
 /* bootstrap.cssに対する上書き */
 h3{background:#FFCCFF;}
 h5{background:#FFDDFF;}
+h6{background:#FFEEFF;}
 p{margin-bottom: 0.05rem;}
 ul{margin-bottom: 0;}
 li{
