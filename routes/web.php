@@ -27,6 +27,11 @@ Route::get('/admin', 'AdminController@update');
 //DB更新用の処理（ボタン押下時）
 Route::post('/import/{kbn}', 'AdminController@import')->name('csvimport_import');
 
+//DB更新用の処理（一覧）
+Route::get('/twitter', 'Twitter@index');
+Route::post('/twitter/search', 'Twitter@search');
+
+
 
 
 

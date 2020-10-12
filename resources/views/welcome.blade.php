@@ -90,8 +90,7 @@
                 <div class="links">
                   <a href="https://laravel.com/docs" class="disabled">Docs</a>
                   <a href="https://laracasts.com" class="disabled">Laracasts</a>
-                  <a href="https://laravel-news.com" class="disabled">News</a>
-                  <!-- <a href="https://blog.laravel.com">Blog</a> -->
+                  <a href={{ url("/twitter") }} class="text-primary">Twitter</a>
                   <a href={{ url("/blog") }} class="text-primary">Blog</a>
                   <a href="https://nova.laravel.com" class="disabled">Nova</a>
                   <a href="https://forge.laravel.com" class="disabled">Forge</a>
