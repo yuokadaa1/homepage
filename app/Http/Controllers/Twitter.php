@@ -57,14 +57,13 @@ class Twitter extends Controller
     // 一回100件までしか取得できないので取得件数が400まで,10回ループまで繰り返す。
     while ( $tweet_count < 300 and $roop_count < 4):
       // APIの呼び出し
-      // $tweets = $connection->get("search/tweets", ['q' => $params , 'count' => 20] );
       $tweets = $connection->get("search/tweets", $params );
 
       // エラーが出てきたらddして中断。
       if( empty($tweets->errors) ){} else {dd("エラーが出現しました。" . $tweets);}
 
       // 1週間以内にtweetがないとstatusesが0になるので0が返ってきたときは繰り返しを終了させる。
-      if( count($tweets->statuses) == 0 ){$tweet_count = 99999;}
+      if( count($tweets->statuses) == 0 ){$tweet_count == 99999;}
 
       // 取ってきたreturn件数を繰り返し判定に加算
       $tweet_count += count($tweets->statuses);
@@ -96,10 +95,10 @@ class Twitter extends Controller
       // ユーザIDで検索のため、該当tweetとは無関係のリプライが含まれてしまうので除外する。
       foreach ($tweets->statuses as $tweet){
         //検索条件に該当するリプライでないものは除外
-        if( empty($tweet->in_reply_to_user_id_str) and $tweet->id <> $request->tweetId ){
+        if( empty($tweet->in_reply_to_status_id) and $tweet->id <> $request->tweetId ){
           // empty=リプライでない、tweet本体でない場合は読み捨てる
-        }else if( $tweet->in_reply_to_user_id_str = $request->tweetId or
-                  $tweet->id = $request->tweetId ){
+        }else if( $tweet->in_reply_to_status_id == $request->tweetId or
+                  $tweet->id == $request->tweetId ){
           // 中身が入っていて、かつtweetIdが一致するもののみ戻す。
           // 戻す際に日付をctime形式からymdに変換
           $tweet->created_at = date("Y-m-d h:i:s",strtotime($tweet->created_at));
