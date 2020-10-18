@@ -55,7 +55,8 @@ class Twitter extends Controller
     }
 
     // 一回100件までしか取得できないので取得件数が400まで,10回ループまで繰り返す。
-    while ( $tweet_count < 300 and $roop_count < 4):
+    // 15分で最大 18, 000(100tweet * 180 call)取得可能
+    while ( $tweet_count < 2000 and $roop_count < 50):
       // APIの呼び出し
       $tweets = $connection->get("search/tweets", $params );
 
@@ -87,8 +88,6 @@ class Twitter extends Controller
     // 取得したデータを逆順でcollectionにセット（最新順に取得されてしまうため。）
     $tweets->statuses = array_reverse($arrayDataS);
     $tweets->search_metadata = array_reverse($arrayDataM);
-    // dd($tweets->search_metadata);
-
 
     if( empty($request->{'searchWord'}) ){
       $return = array();
