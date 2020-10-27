@@ -15,8 +15,32 @@ class Twitter extends Controller
     return view('twitter.index');
   }
 
-
   public function search(Request $request)
+  {
+    // URLで検索した場合、構成されているURLからtweetID,tweetUserに分解
+    if( isset($request->button3) ){
+      $address1 = parse_url($request->searchURL);
+      $address2 = explode("/",$address1['path']);
+      $request->tweetId = $address2[3];
+      $request->userName = $address2[1];
+    }
+
+    // Pythonのファイルがあるパスを設定
+    // $pythonPath =  "../app/Python/";
+    $pythonPath =  "../app/Python/";
+    // C:\Users\dummy\AppData\Local\Programs\Python\Python38\python.exe
+    // $command = "/usr/bin/python3 " . $pythonPath . "mnist_test.py " . $pythonPath . " " .$image_pass;
+    $command = $pythonPath . "/python " . $pythonPath . "getTweetByText.py " . $request->tweetId;
+    exec($command , $outputs);
+
+    dd($command,$outputs);
+
+
+  }
+
+  // python呼び出し前の設定。
+  // 実際にbtn押されて呼ばれるのは[search]のため、呼び出い方の関数を[search]にする。
+  public function searchOwn(Request $request)
   {
 
     // 処理速度の計測開始
@@ -48,7 +72,7 @@ class Twitter extends Controller
     // APIの検索キーのセット
     if( empty( $request->searchWord ) ){
       //ユーザIDによる検索。
-      $params = array('q' => $request->userName . " exclude:retweets" ,'count' => 100,);
+      $params = array('q' => $request->userName . " exclude:retweets" ,'count' => 10,);
     } else {
       // テキスト本文による検索
       $params = array('q' => $request->searchWord . " exclude:retweets" ,'count' => 100,);
@@ -59,6 +83,7 @@ class Twitter extends Controller
     while ( $tweet_count < 2000 and $roop_count < 50):
       // APIの呼び出し
       $tweets = $connection->get("search/tweets", $params );
+      dd($tweets);
 
       // エラーが出てきたらddして中断。
       if( empty($tweets->errors) ){} else {dd("エラーが出現しました。" . $tweets);}
