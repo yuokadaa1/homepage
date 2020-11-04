@@ -123,7 +123,7 @@
             </td>
           </tr>
           <input type="hidden" name="userid{{$idx}}" value="{{ $getTweet->id }}">
-          <input type="hidden" name="screen_name{{$idx}}" value="{{ $getTweet->screen_name }}">
+          <input type="hidden" name="screen_name{{$idx}}" value="{{ $getTweet->username }}">
           <!-- getTweet->user->screen_name 項目絞らない判を使用する場合は左にする必要がある。-->
         @endforeach
       </table>
