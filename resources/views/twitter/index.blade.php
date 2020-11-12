@@ -31,45 +31,6 @@
     </form>
   </div>
 
-
-  <h5>tweet本文で検索する場合</h5>
-  <div class="container">
-    <form method="post" action="{{ url('/twitter/search') }}">
-      {{ csrf_field() }}
-      <div class="form-group">
-
-        <div class="form-inline">
-          <label class="col-sm-3 control-label" for="username">検索ワード</label>
-          <input type="text" name="searchWord" class="col-sm-4 form-control">
-        </div>
-
-        <input type="submit" name="button1" value="テキストで検索" class="btn btn-success btn-wide" />
-
-      </div>
-    </form>
-  </div>
-
-  <h5>tweetIDで検索する場合</h5>
-  <div class="container">
-    <form method="post" action="{{ url('/twitter/search') }}">
-      {{ csrf_field() }}
-      <div class="form-group">
-
-        <div class="form-inline">
-          <label class="col-sm-3 control-label" for="username">user_name</label>
-          <input type="text" name="userName" class="col-sm-4 form-control">
-        </div>
-        <div class="form-inline">
-          <label class="col-sm-3 control-label" for="username">tweet_id</label>
-          <input type="text" name="tweetId" class="col-sm-4 form-control">
-        </div>
-
-        <input type="submit" name="button1" value="IDで検索" class="btn btn-success btn-wide" />
-
-      </div>
-    </form>
-  </div>
-
   @isset( $getTweets )
   <h5>検索結果</h5>
     <a>取得件数 = {{ $tweet_count_all }} / {{ $tweet_count }}</a>
@@ -77,13 +38,14 @@
       <table class="table table-hover-responsive">
         <tr class="thead-dark">
           <th rowspan="2" valign="middle">No.</th>
-          <th rowspan="2" valign="middle">日時</th>
+          <th valign="middle">日時</th>
           <th>本文</th>
           <!-- <th>name</th> -->
           <th>URL</th>
           <th>copy</th>
         </tr>
         <tr class="thead-dark">
+          <th>type</th>
           <th>翻訳</th>
           <th>URL</th>
           <th>copy</th>
@@ -102,7 +64,7 @@
         @foreach ($getTweets->statuses  as $idx => $getTweet)
           <tr>
             <td rowspan="2" valign="middle">{{ $idx }}</td>
-            <td rowspan="2" valign="middle">{{ $getTweet->created_at }}</td>
+            <td>{{ $getTweet->created_at }}</td>
             <td>{{ $getTweet->text }}</td>
             <td>
               <input type="button" name="getURL{{$idx}}" value="URL" class="btn btn-success btn-wide"
@@ -113,6 +75,7 @@
             </td>
           </tr>
           <tr>
+            <td>{{ $getTweet->serachType }}</td>
             <td id="textJp{{$idx}}">{{ $getTweet->textJp }}</td>
             <td>
               <input type="button" name="getText{{$idx}}" value="TEXT" class="btn btn-success btn-wide"
