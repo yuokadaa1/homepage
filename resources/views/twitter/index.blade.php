@@ -75,7 +75,7 @@
             </td>
           </tr>
           <tr>
-            <td>{{ $getTweet->serachType }}</td>
+            <td>{{ $getTweet->searchType }}</td>
             <td id="textJp{{$idx}}">{{ $getTweet->textJp }}</td>
             <td>
               <input type="button" name="getText{{$idx}}" value="TEXT" class="btn btn-success btn-wide"
@@ -86,8 +86,8 @@
             </td>
           </tr>
           <input type="hidden" name="userid{{$idx}}" value="{{ $getTweet->id }}">
-          <input type="hidden" name="screen_name{{$idx}}" value="{{ $getTweet->username }}">
-          <!-- getTweet->user->screen_name 項目絞らない判を使用する場合は左にする必要がある。-->
+          <input type="hidden" name="username{{$idx}}" value="{{ $getTweet->username }}">
+          <!-- getTweet->user->username 項目絞らない判を使用する場合は左にする必要がある。-->
         @endforeach
       </table>
     </div>
@@ -138,11 +138,11 @@
 
       if( Number.isFinite(textVal) ){
         // copy用URLの生成
-        screen_name = document.getElementsByName("screen_name" + textVal).item(0).value
+        username = document.getElementsByName("username" + textVal).item(0).value
         userid = document.getElementsByName("userid" + textVal).item(0).value;
         // 純粋にURLを作るだけならこれでよい。
-        // copyFrom.textContent = "https://twitter.com/" + screen_name + "/status/" + userid;
-        twitterurl = "https://twitter.com/" + screen_name + "/status/" + userid;
+        // copyFrom.textContent = "https://twitter.com/" + username + "/status/" + userid;
+        twitterurl = "https://twitter.com/" + username + "/status/" + userid;
       }else{
         twitterurl = textVal;
       }

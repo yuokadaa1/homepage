@@ -44,6 +44,9 @@ class Twitter extends Controller
 
     if( !empty($tweets->statuses) ){
       foreach ( $tweets->statuses as $tweet ){
+        // if( empty($tweet->created_at) ){
+        //   dd($tweet);
+        // }
         $tweet->created_at = date("Y-m-d h:i:s",strtotime($tweet->created_at));
         array_push( $gasSetText , $tweet->text );
       }
@@ -60,13 +63,24 @@ class Twitter extends Controller
     curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params)); //postするデータの格納（json）
     curl_setopt($curl,CURLOPT_FOLLOWLOCATION,true);//Locationをたどる
     curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);//文字列で結果を返させる
-    $response = curl_exec($curl);// レスポンスを変数に入れる
+
+    // 制限overで実行できない
+    // $response = curl_exec($curl);// レスポンスを変数に入れる
+
     curl_close($curl);// curlの処理を終了
 
-    $returnAPI = json_decode( $response );
-    // GASにから返ってきた情報を配列にセット
-    foreach ($tweets->statuses as $idx => $tweet){
-      $tweet->textJp = $returnAPI->message[$idx];
+    // 制限overで実行できない
+    // $returnAPI = json_decode( $response );
+
+    // GASから返ってきた情報を配列にセット
+    if( !empty($returnAPI->message) ){
+      foreach ($tweets->statuses as $idx => $tweet){
+        $tweet->textJp = $returnAPI->message[$idx];
+      }
+    }else{
+      foreach ($tweets->statuses as $idx => $tweet){
+          $tweet->textJp = "";
+      }
     }
 
     return view('twitter.index')->
@@ -83,7 +97,7 @@ class Twitter extends Controller
     $arrayDataS = array();
     $arrayDataM = array();
 
-    while (!empty($nextToken) and $tweet_count < 1000 and $roop_count < 20):
+    while( !empty($nextToken) and $tweet_count < 300 and $roop_count < 5 ):
 
       $parts_name = array();
       $parts_id = array();
@@ -91,7 +105,7 @@ class Twitter extends Controller
       $responseJsonText = $this->curlCoal($searchType,$request,$nextToken);
 
       // nextTokenがあったら再検索するため、urlにnextTokenを設定する。
-      if (!empty($responseJsonText->meta->next_token)){
+      if( !empty($responseJsonText->meta->next_token) ){
         $nextToken = $responseJsonText->meta->next_token;
       }else{
         $nextToken = "";
@@ -110,55 +124,47 @@ class Twitter extends Controller
       }
 
       // データがとれなければブレイク
-      if( empty($responseJsonText->data) or count($responseJsonText->data) == 0 ){break;}
-      if( empty($responseJsonText->includes) ){dd("includes(ユーザー情報)の取得に失敗しました。",$curl,$responseJsonText);}
-      if( empty($responseJsonText->meta) and $searchType <> "original" ){dd("meta取得失敗",$searchType,$responseJsonText);}
+      // if( empty($responseJsonText->data) or count($responseJsonText->data) == 0 ){break;}
+      // if( empty($responseJsonText->includes) ){dd("includes(ユーザー情報)の取得に失敗しました。",$curl,$responseJsonText);}
+      // if( empty($responseJsonText->meta) and $searchType <> "original" ){dd("meta取得失敗",$searchType,$responseJsonText);}
 
-      // user_fieldsは重複した場合1つしか帰らない(1idで2tweet取れた場合、dataは2,usersは1)ので検索する。
-      // curlの返信結果が{data:[],includes:{users:[],media[]},meta;{}}になっているので検索用に並列化
-      foreach ($responseJsonText->includes->users as $user){
-        array_push($parts_name , $user->username);
-        array_push($parts_id , $user->id);
-      }
-      // $count = 0;
-      // $count2 = 0;
-      // $count3 = 0;
-      foreach ($responseJsonText->data as $key => $data){
-        if( $searchType == "reTweet" ){
-          // if( !empty($data->referenced_tweets[0]->id) ){
-          //   $count2++;
-          //   if( $data->conversation_id != $request->tweetId ){
-          //     $count3++;
-          //     if( $data->referenced_tweets[0]->id == $request->tweetId ){
-          //       $count++;
-          //     }
-          //   }
-          }
+      if( $searchType == "reTweet" ){
+        foreach ($responseJsonText as $key => $data){
+          $returnParts = array();
+          $returnParts['id'] = $data->id;
+          $returnParts['created_at'] = $data->created_at;
+          $returnParts['text'] = $data->text;
+          $returnParts['username'] = $data->user->screen_name;
+          $returnParts['searchType'] = $searchType;
+          $arrayDataS = array_merge($arrayDataS,array((object)$returnParts));
         }
-        // reTweetはuserNameで検索かけているので不要なものがたらふく取れているので排除しておく
-        if( $searchType == "reTweet" and ( empty($data->referenced_tweets[0]->id) or
-        $data->conversation_id == $request->tweetId or $data->referenced_tweets[0]->id <> $request->tweetId )){
-          // unset($responseJsonText->data[$key]);
-        }else{
+      }else{
+        // user_fieldsは重複した場合1つしか帰らない(1idで2tweet取れた場合、dataは2,usersは1)ので検索する。
+        // curlの返信結果が{data:[],includes:{users:[],media[]},meta;{}}になっているので検索用に並列化
+        foreach( $responseJsonText->includes->users as $user ){
+          array_push($parts_name , $user->username);
+          array_push($parts_id , $user->id);
+        }
+        foreach( $responseJsonText->data as $key => $data ){
           $data->username = $parts_name[array_search($data->author_id,$parts_id)];
-          $data->serachType = $searchType;
+          $data->searchType = $searchType;
         }
       }
-      // if( $searchType == "reTweet"){
-      //   dd($count,$count2,$count3,$request->tweetId,$responseJsonText);
-      // }
       // 件数の加算とデータの退避
       $roop_count++;
-      $arrayDataS = array_merge($arrayDataS,$responseJsonText->data );
       // originalの場合はmeta情報がセットされないので除外
-      if( $searchType <> "original" ){
-        $arrayDataM[] = (array)$responseJsonText->meta;
+      if( $searchType == "conversation" ){
         $tweet_count += $responseJsonText->meta->result_count;
+        $arrayDataS = array_merge($arrayDataS,$responseJsonText->data );
+      }
+      if( $searchType == "original" ){
+        $arrayDataS = array_merge($arrayDataS,$responseJsonText->data );
       }
 
     endwhile;
 
-    $return = (object)(["statuses" => array_reverse($arrayDataS),"search_metadata" => array_reverse($arrayDataM)]);
+    // $return = (object)(["statuses" => array_reverse($arrayDataS),"search_metadata" => array_reverse($arrayDataM)]);
+    $return = (object)(["statuses" => array_reverse($arrayDataS)]);
 
     return $return;
   }
@@ -170,7 +176,7 @@ class Twitter extends Controller
     $base = "https://api.twitter.com/2/tweets";
     if($searchType == "conversation" ){
       $param = "/search/recent?query=conversation_id:" . $request->tweetId;
-      // $param = $param . "&max_results=100";
+      $param = $param . "&max_results=100";
     }elseif($searchType == "reTweet"){
       // reTweetはv2だと検索機能がまだ機能していないのでv1.1でっとってくる。
       $base = 'https://api.twitter.com/1.1/statuses/retweets/';
@@ -209,10 +215,6 @@ class Twitter extends Controller
     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
     $returnText = json_decode(curl_exec($curl));
     curl_close($curl);// curlの処理を終了
-
-    // if($searchType == "reTweet"){
-    //   dd($returnText);
-    // }
 
     return $returnText;
   }
