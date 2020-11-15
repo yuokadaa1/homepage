@@ -19,6 +19,9 @@ class Twitter extends Controller
     // 変数の初期設定
     $tweets = array();
     $gasSetText = array();
+    $countO = 0;
+    $countC = 0;
+    $countR = 0;
 
     // URLで検索した場合、構成されているURLからtweetID,tweetUserに分解
     if( isset($request->button3) ){
@@ -33,53 +36,37 @@ class Twitter extends Controller
     $conversation = $this->getTweet("conversation",$request);
     $reTweet = $this->getTweet("reTweet",$request);
 
-    // 取得したデータを逆順でobjectにセット（最新順に取得されてしまうため。）
-    // if( !empty($reTweet) ){$tweets = array_merge($tweets,array_reverse($reTweet->statuses));}
-    // if( !empty($conversation) ){$tweets = array_merge($tweets,array_reverse($conversation->statuses));}
-    // if( !empty($originTweet) ){$tweets = array_merge($tweets,array_reverse($originTweet->statuses));}
-    if( !empty($originTweet) ){$tweets = array_merge($tweets,$originTweet->statuses);}
-    if( !empty($conversation) ){$tweets = array_merge($tweets,$conversation->statuses);}
-    if( !empty($reTweet) ){$tweets = array_merge($tweets,$reTweet->statuses);}
-    $tweets = (object)(["statuses" => $tweets]);
+    if( !empty($originTweet) ){
+      $tweets = array_merge($tweets,$originTweet->statuses);
+      $countO = $originTweet->count;
+    }
+    if( !empty($conversation) ){
+      $tweets = array_merge($tweets,$conversation->statuses);
+      $countC = $conversation->count;
+    }
+    if( !empty($reTweet) ){
+      $tweets = array_merge($tweets,$reTweet->statuses);
+      $countR = $reTweet->count;
+    }
 
+    $tweets = (object)(["statuses" => $tweets , "countO" =>$countO,"countC" => $countC,"countR" =>$countR]);
+
+    // 1件も取れていない場合（originalがとれていない＝アドレスエラーだが）は以降の処理をしない
     if( !empty($tweets->statuses) ){
       foreach ( $tweets->statuses as $tweet ){
-        // if( empty($tweet->created_at) ){
-        //   dd($tweet);
-        // }
         $tweet->created_at = date("Y-m-d h:i:s",strtotime($tweet->created_at));
         array_push( $gasSetText , $tweet->text );
       }
-    }
-
-    // oogle翻訳もかけておく
-    // curlコマンドで実行するとき。
-    // curl -d '{"text":"hello", "source":"en","target":"ja"}' -L https://script.google.com/macros/s/AKfycbySxRYYZ_23oXT1gn-4d2mkXhk6f9gj6ywynCKmAASiojvvroZf/exec
-    $params = array('text' => $gasSetText,'source' => "en",'target' => "ja");
-    $sendURL = "https://script.google.com/macros/s/AKfycbySxRYYZ_23oXT1gn-4d2mkXhk6f9gj6ywynCKmAASiojvvroZf/exec";
-
-    $curl = curl_init($sendURL);      // curlの処理を始める合図
-    curl_setopt($curl, CURLOPT_POST, true); //POST送信
-    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params)); //postするデータの格納（json）
-    curl_setopt($curl,CURLOPT_FOLLOWLOCATION,true);//Locationをたどる
-    curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);//文字列で結果を返させる
-
-    // 制限overで実行できない
-    // $response = curl_exec($curl);// レスポンスを変数に入れる
-
-    curl_close($curl);// curlの処理を終了
-
-    // 制限overで実行できない
-    // $returnAPI = json_decode( $response );
-
-    // GASから返ってきた情報を配列にセット
-    if( !empty($returnAPI->message) ){
-      foreach ($tweets->statuses as $idx => $tweet){
-        $tweet->textJp = $returnAPI->message[$idx];
-      }
-    }else{
-      foreach ($tweets->statuses as $idx => $tweet){
-          $tweet->textJp = "";
+      // GASを呼び出して翻訳、objectに結果をセットする。
+      $returnAPI = $this->curlCoalGAS($gasSetText);
+      if( !empty($returnAPI->message) ){
+        foreach ($tweets->statuses as $idx => $tweet){
+          $tweet->textJp = $returnAPI->message[$idx];
+        }
+      }else{
+        foreach ($tweets->statuses as $idx => $tweet){
+            $tweet->textJp = "";
+        }
       }
     }
 
@@ -124,19 +111,25 @@ class Twitter extends Controller
       }
 
       // データがとれなければブレイク
-      // if( empty($responseJsonText->data) or count($responseJsonText->data) == 0 ){break;}
-      // if( empty($responseJsonText->includes) ){dd("includes(ユーザー情報)の取得に失敗しました。",$curl,$responseJsonText);}
-      // if( empty($responseJsonText->meta) and $searchType <> "original" ){dd("meta取得失敗",$searchType,$responseJsonText);}
+      if( $searchType == "reTweet" ){
+        if( empty($responseJsonText) or count($responseJsonText) == 0 ){break;}
+      }else{
+        if( empty($responseJsonText->data) or count($responseJsonText->data) == 0 ){break;}
+        if( empty($responseJsonText->includes) ){dd("includes(ユーザー情報)の取得に失敗しました。",$curl,$responseJsonText);}
+        if( empty($responseJsonText->meta) and $searchType <> "original" ){dd("meta取得失敗",$searchType,$responseJsonText);}
+      }
 
       if( $searchType == "reTweet" ){
         foreach ($responseJsonText as $key => $data){
-          $returnParts = array();
-          $returnParts['id'] = $data->id;
-          $returnParts['created_at'] = $data->created_at;
-          $returnParts['text'] = $data->text;
-          $returnParts['username'] = $data->user->screen_name;
-          $returnParts['searchType'] = $searchType;
-          $arrayDataS = array_merge($arrayDataS,array((object)$returnParts));
+          if($data->is_quote_status == true){
+            $returnParts = array();
+            $returnParts['id'] = $data->id;
+            $returnParts['created_at'] = $data->created_at;
+            $returnParts['text'] = $data->text;
+            $returnParts['username'] = $data->user->screen_name;
+            $returnParts['searchType'] = $searchType;
+            $arrayDataS = array_merge($arrayDataS,array((object)$returnParts));
+          }
         }
       }else{
         // user_fieldsは重複した場合1つしか帰らない(1idで2tweet取れた場合、dataは2,usersは1)ので検索する。
@@ -152,19 +145,25 @@ class Twitter extends Controller
       }
       // 件数の加算とデータの退避
       $roop_count++;
-      // originalの場合はmeta情報がセットされないので除外
-      if( $searchType == "conversation" ){
-        $tweet_count += $responseJsonText->meta->result_count;
-        $arrayDataS = array_merge($arrayDataS,$responseJsonText->data );
-      }
-      if( $searchType == "original" ){
-        $arrayDataS = array_merge($arrayDataS,$responseJsonText->data );
+      // originalの場合はmeta情報がセットされないので除外、while繰り返されるのはconveersationのみ
+      switch ($searchType) {
+        case "original":
+          $arrayDataS = array_merge($arrayDataS,$responseJsonText->data );
+          $tweet_count = 1;
+          break;
+        case "conversation":
+          $tweet_count += $responseJsonText->meta->result_count;
+          $arrayDataS = array_merge($arrayDataS,$responseJsonText->data );
+          break;
+        case "reTweet":
+          $tweet_count = count($arrayDataS);
+          break;
       }
 
     endwhile;
 
     // $return = (object)(["statuses" => array_reverse($arrayDataS),"search_metadata" => array_reverse($arrayDataM)]);
-    $return = (object)(["statuses" => array_reverse($arrayDataS)]);
+    $return = (object)(["statuses" => array_reverse($arrayDataS) , "count" => $tweet_count]);
 
     return $return;
   }
@@ -181,11 +180,8 @@ class Twitter extends Controller
       // reTweetはv2だと検索機能がまだ機能していないのでv1.1でっとってくる。
       $base = 'https://api.twitter.com/1.1/statuses/retweets/';
       $param = $request->tweetId . '.json';
-      // v2でuser名から無理やり取ってこようとしたときのパラメータ
-      // $param = "/search/recent?query=" . $request->userName;
       $param = $param . "?count=100";
     }else{
-      // if($searchType == "original")
       $param = "?ids=" . $request->tweetId;
     }
     // reTweetはv1.1で取ってくるのでこのへんが設定できない
@@ -217,6 +213,32 @@ class Twitter extends Controller
     curl_close($curl);// curlの処理を終了
 
     return $returnText;
+  }
+
+  public function curlCoalGAS($gasSetText){
+
+    // oogle翻訳。 curlコマンドで実行するときのコマンドは以下。
+    // curl -d '{"text":"hello", "source":"en","target":"ja"}' -L https://script.google.com/macros/s/AKfycbySxRYYZ_23oXT1gn-4d2mkXhk6f9gj6ywynCKmAASiojvvroZf/exec
+    $params = array('text' => $gasSetText,'source' => "en",'target' => "ja");
+    $sendURL = "https://script.google.com/macros/s/AKfycbySxRYYZ_23oXT1gn-4d2mkXhk6f9gj6ywynCKmAASiojvvroZf/exec";
+
+    $curl = curl_init($sendURL);      // curlの処理を始める合図
+    curl_setopt($curl, CURLOPT_POST, true); //POST送信
+    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params)); //postするデータの格納（json）
+    curl_setopt($curl,CURLOPT_FOLLOWLOCATION,true);//Locationをたどる
+    curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);//文字列で結果を返させる
+
+    // 制限overで実行できない時にコメントアウトする。
+    $response = curl_exec($curl);// レスポンスを変数に入れる
+
+    curl_close($curl);// curlの処理を終了
+
+    // 制限overで実行できないときはコメントアウトする。
+    if( !empty($response) ){
+      $returnGAS = json_decode( $response );
+      return $returnGAS;
+    }
+
   }
 
 }

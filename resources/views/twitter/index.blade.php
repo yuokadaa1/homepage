@@ -33,7 +33,8 @@
 
   @isset( $getTweets )
   <h5>検索結果</h5>
-    <a>取得件数 = {{ $tweet_count_all }} / {{ $tweet_count }}</a>
+
+    <a>取得件数(original/conversation/retweet) = {{ $getTweets->countO }} / {{ $getTweets->countC }} / {{ $getTweets->countR }}</a>
     <div class="container">
       <table class="table table-hover-responsive">
         <tr class="thead-dark">
