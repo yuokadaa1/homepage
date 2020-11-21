@@ -21,8 +21,12 @@
       <div class="form-group">
 
         <div class="form-inline">
-          <label class="col-sm-3 control-label" for="username">URL</label>
-          <input type="text" name="searchURL" class="col-sm-4 form-control">
+          <label class="col-sm-3 control-label">URL</label>
+          @isset( $inputURL )
+            <input type="text" name="searchURL" class="col-sm-4 form-control" value={{ $inputURL }}>
+          @else
+            <input type="text" name="searchURL" class="col-sm-4 form-control">
+          @endisset
         </div>
 
         <input type="submit" name="button3" value="URLで検索" class="btn btn-success btn-wide" />
