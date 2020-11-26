@@ -136,7 +136,7 @@
 
     function copyTextToClipboard(textVal){
       // 検索wordの取得時にはtextValにはURLが、リツイートの時はtextValにはAPIの返り値が格納
-      console.log("TEXTJzpのほうが押されました");
+      // console.log("TEXTJzpのほうが押されました");
 
       // hidden属性のURLをcopyしてクリップボードに貼り付け
       var copyFrom = document.createElement("textarea");
@@ -152,7 +152,14 @@
         twitterurl = textVal;
       }
       // リプライ元を非表示に設定したURLの生成
-      copyFrom.textContent = '<figure class="wp-block-embed-twitter wp-block-embed is-type-rich is-provider-twitter"><div class="wp-block-embed__wrapper"><blockquote class="twitter-tweet" data-conversation="none">\r\n' + twitterurl + '\r\n</blockquote></div></figure>';
+      if(textVal == 0){
+        copyFrom.textContent = '<figure class="wp-block-embed-twitter wp-block-embed is-type-rich is-provider-twitter"><div class="wp-block-embed__wrapper"><blockquote class="twitter-tweet" data-conversation="none">\r\n' + twitterurl + '\r\n</blockquote></div></figure>';
+      }else{
+        // 右側に設定することでリプライであることを表現する。
+        copyFrom.textContent = '<div align="right"><figure class="wp-block-embed-twitter wp-block-embed is-type-rich is-provider-twitter"><div class="wp-block-embed__wrapper"><blockquote class="twitter-tweet" data-conversation="none">\r\n' + twitterurl + '\r\n</blockquote></div></figure></div>';
+      }
+
+      // copyFrom.textContent = '<figure class="wp-block-embed-twitter wp-block-embed is-type-rich is-provider-twitter"><div class="wp-block-embed__wrapper"><blockquote class="twitter-tweet" data-conversation="none">\r\n' + twitterurl + '\r\n</blockquote></div></figure>';
 
       var bodyElm = document.getElementsByTagName("body")[0];
       bodyElm.appendChild(copyFrom);
