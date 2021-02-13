@@ -1,0 +1,49 @@
+/**
+ * ローソク足チャート用の定義
+ */
+text {
+    fill: #000;
+}
+path.candle {
+    stroke: #000000;
+}
+path.candle.body {
+    stroke-width: 0;
+}
+path.candle.up {
+    fill: #00AA00;
+    stroke: #00AA00;
+}
+path.candle.down {
+    fill: #FF0000;
+    stroke: #FF0000;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* 普通の折れ線グラフ */
+/*
+.axis path, .axis line {
+fill: none;
+stroke: black;
+}
+.tick text {
+font-size: 12px;
+}
+.x .tick text{
+font-size: 10px;
+transform: rotate(-60deg) translate(-30px, -5px);
+}
+.line {
+fill: none;
+stroke: blue;
+stroke-width: 2px;
+} */

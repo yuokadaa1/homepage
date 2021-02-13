@@ -178,6 +178,9 @@ return [
         //Laravel-Excelの導入
         Maatwebsite\Excel\ExcelServiceProvider::class,
 
+        //crowlerの導入1/2
+        Weidner\Goutte\GoutteServiceProvider::class,
+
     ],
 
     /*
@@ -232,6 +235,9 @@ return [
 
         //Laravel-Excelの導入
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+
+        //crowlerの導入2/2
+        'Goutte' => Weidner\Goutte\GoutteFacade::class,
 
     ],
 

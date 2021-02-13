@@ -90,6 +90,7 @@ Navbar
 <!-- Bootstrap core JavaScript
   ================================================== -->
 
-@yield('scripts')
+@section('scripts')
+@show
 </body>
 </html>

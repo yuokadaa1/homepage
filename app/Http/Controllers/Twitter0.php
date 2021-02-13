@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 
 // これは twitterAPIv2の使用前（v1.1?かなtwitterOauthを使用している。）
 
@@ -199,4 +199,4 @@ class Twitter extends Controller
                 'tweet_count' => $tweet_count , 'tweet_count_all' => count($tweets->statuses)]);;
   }
 
-}
+} -->

@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 namespace App\Http\Controllers;
 
 // これは twitterAPIv2の使用後
@@ -153,4 +153,4 @@ class Twitter extends Controller
     return $returnText;
   }
 
-}
+} -->

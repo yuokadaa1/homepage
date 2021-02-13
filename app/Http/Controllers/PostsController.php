@@ -51,6 +51,9 @@ class PostsController extends Controller
             $arrayData2 = $this->b2020052702($request,$arrayData);
           }
           return view('blogs.' . $id)->with(['json'=>$arrayData,'json2'=>$arrayData2,'requestD'=>$request]);
+        case "2021020101":
+          $arrayData = $this->b2021020101($request);
+          return view('blogs.' . $id)->with('json',$arrayData);
         default:
           return view('blogs.' . $id);
       }
@@ -181,6 +184,73 @@ class PostsController extends Controller
       }
 
       return $json;
+    }
+
+
+    private function b2021020101(Request $request){
+
+      $inputTSECode = $request->tseCode;
+      $urlStock = "https://kabuoji3.com/stock/".$inputTSECode."/";
+      $crawler = \Goutte::request('GET', $urlStock);
+
+      $stockPrice = array();
+      // 7203のTOPページを取得
+      array_push($stockPrice,$crawler->filter('a')->each(function($element) use ($urlStock){
+      // $stockPrice = array_merge($stockPrice,$crawler->filter('a')->each(function($element) use ($urlStock){
+
+        // hrefリンク(//https://kabuoji3.com/stock/7203/2018/)のurlが7203のアドレスと一致したものを対象に
+        if (0 === strpos($element->attr('href'), $urlStock)) {
+
+          // 条件を一致したページに対してcrawling開始
+          $crawlerLi = \Goutte::request('GET', $element->attr('href'));
+
+          $crawlerStock = array();
+          array_push($crawlerStock,$crawlerLi->filter('table')->eq(0)->filter('tr')->each(function($element) {
+          // $crawlerStock = array_merge($crawlerStock,$crawlerLi->filter('table')->eq(0)->filter('tr')->each(function($element) {
+
+            $uri = explode("/", $element->getUri());
+            // 対象年月で絞りこみ（URIで操作しているのでここでできるのは年度のみ）
+            if($uri[5] != "" and (int)$uri[5] > 2019){
+
+              if(count($element->filter('td'))){
+                return array(
+                  'Date' => $element->filter('td')->eq(0)->text(),
+                  'Open' => $element->filter('td')->eq(1)->text(),
+                  'High' => $element->filter('td')->eq(2)->text(),
+                  'Low' => $element->filter('td')->eq(3)->text(),
+                  'Close' => $element->filter('td')->eq(4)->text(),
+                  'Volume' => $element->filter('td')->eq(5)->text()
+                     // 'tradingValue' => $element->filter('td')->eq(6)->text()
+                );
+                  // $element->filter('td')->eq(0)->text() => array(
+                  //   'openingPrice' => $element->filter('td')->eq(1)->text(),
+                  //   'highPrice' => $element->filter('td')->eq(2)->text(),
+                  //   'lowPrice' => $element->filter('td')->eq(3)->text(),
+                  //    'closingPrice' => $element->filter('td')->eq(4)->text()
+                  //    // 'volume' => $element->filter('td')->eq(5)->text(),
+                  //    // 'tradingValue' => $element->filter('td')->eq(6)->text()
+                  //  )
+                // );
+              }
+            }
+          }));
+
+        };
+          if(!empty($crawlerStock)){return $crawlerStock;}
+        }));
+        $aaa = array();
+        $stockPrice = array_filter($stockPrice);
+        foreach($stockPrice as $sPrice){
+          foreach($sPrice as $sPrice2){
+            if(isset($sPrice2)){
+              $aaa = array_merge($aaa,$sPrice2);
+            }
+          }
+        }
+        // 連想配列のkeyで降順ソート
+        krsort($aaa);
+
+        return $aaa;
     }
 
 
