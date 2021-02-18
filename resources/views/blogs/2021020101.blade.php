@@ -44,7 +44,7 @@
     		{{ Form::radio('selectButton', '2', false, array('id' => '112')) }} {{ Form::label('112', '表示期間の選択：日付を指定') }}
     	</p>
 
-    	<div class="container ml-4 form-group row mb-0">
+    	<div class="contai ner ml-4 form-group row mb-0">
         <label for="text3a" class="col-form-label">開始</label>
         <div class="col-sm-4">
           <input type="text" id="pickerStart" class="form-control" placeholder="年/月/日">
@@ -69,15 +69,12 @@
   <script src="https://d3js.org/d3.v5.min.js"></script>
   <script src="http://techanjs.org/techan.min.js"></script>
   <script>
-    var data = <?php echo $json; ?>;//銘柄コードから取得した株価
+    var data = JSON.parse('<?php echo $json; ?>');
   </script>
 
   <div id="chartContainer"></div>
 	<link rel="stylesheet" href="/css/hp20210201.css">
 	<script src="/js/hp20210201.js"></script>
 @endisset
-
-
-
 
 @endsection
