@@ -193,10 +193,17 @@ class PostsController extends Controller
       $urlStock = "https://kabuoji3.com/stock/".$inputTSECode."/";
       $crawler = \Goutte::request('GET', $urlStock);
 
+
+
+
+
+
+      // returnapiがうまく動かないのでいったんコメントアウト
+      //
       $stockPrice = array();
       // 7203のTOPページを取得
-      $stockPrice += $crawler->filter('a')->each(function($element) use ($urlStock){
-      // $stockPrice = array_merge($stockPrice,$crawler->filter('a')->each(function($element) use ($urlStock){
+      // $stockPrice += $crawler->filter('a')->each(function($element) use ($urlStock){
+      $stockPrice = array_merge($stockPrice,$crawler->filter('a')->each(function($element) use ($urlStock){
 
         // hrefリンク(//https://kabuoji3.com/stock/7203/2018/)のurlが7203のアドレスと一致したものを対象に
         if (0 === strpos($element->attr('href'), $urlStock)) {
@@ -205,56 +212,79 @@ class PostsController extends Controller
           $crawlerLi = \Goutte::request('GET', $element->attr('href'));
 
           $crawlerStock = array();
-          $crawlerStock += $crawlerLi->filter('table')->eq(0)->filter('tr')->each(function($element) {
+          // $crawlerStock += $crawlerLi->filter('table')->eq(0)->filter('tr')->each(function($element) {
+          $crawlerStock =  array_merge($crawlerStock,$crawlerLi->filter('table')->eq(0)->filter('tr')->each(function($element) {
             $uri = explode("/", $element->getUri());
             // 対象年月で絞りこみ（URIで操作しているのでここでできるのは年度のみ）
             if($uri[5] != "" and (int)$uri[5] > 2019){
 
               if(count($element->filter('td'))){
                 return array(
-                  'Date' => $element->filter('td')->eq(0)->text(),
-                  'Open' => $element->filter('td')->eq(1)->text(),
-                  'High' => $element->filter('td')->eq(2)->text(),
-                  'Low' => $element->filter('td')->eq(3)->text(),
-                  'Close' => $element->filter('td')->eq(4)->text(),
-                  'Volume' => $element->filter('td')->eq(5)->text()
-                     // 'tradingValue' => $element->filter('td')->eq(6)->text()
+                  // 'Date' => $element->filter('td')->eq(0)->text(),
+                  $element->filter('td')->eq(0)->text() => array(
+                    'Open' => $element->filter('td')->eq(1)->text(),
+                    'High' => $element->filter('td')->eq(2)->text(),
+                    'Low' => $element->filter('td')->eq(3)->text(),
+                    'Close' => $element->filter('td')->eq(4)->text(),
+                    'Volume' => $element->filter('td')->eq(5)->text()
+                       // 'tradingValue' => $element->filter('td')->eq(6)->text()
+                  )
                 );
               }
             }
-          });
+          }));
 
         };
-          if(!empty($crawlerStock)){return $crawlerStock;}
-      });
-      $aaa = array();
+        if(!empty($crawlerStock)){return $crawlerStock;}
+      }));
+
+      $organizePrice = array();
       // 年度ごとの配列の中に日杖をキーとする連想配列として格納されている。 array[年のリンク数][array[date][5]]
       $stockPrice = array_filter($stockPrice);
-      dd($stockPrice);
-      // ksort($stockPrice);
       foreach($stockPrice as $sPrice){
         if(isset($sPrice)){
           foreach($sPrice as $sPrice2){
             if(isset($sPrice2)){
-              array_push($aaa,$sPrice2);
-              // array_push($sendDate,$sPrice2->Date);
+              $organizePrice = array_merge($organizePrice,$sPrice2);
             }
           }
         }
       }
-      dd($aaa);
+      // keyでソート
+      ksort($organizePrice);
 
-      // curl  -d  '{"execType":"1", "pricePeriod":["2021/01/01","2021/01/02","2021/01/03","2021/01/04","2021/01/05","2021/01/06"]}' -L https://script.google.com/macros/s/AKfycbzPieZWZ8_m_KkaWypUiE8V9vALCH8n7lsVjEblz8QdH2fddrJX04Fx/exec
+
+      // returnapiがうまく動かないのでいったんコメントアウト
+
+
+
+
+
+      // SpreadSheetから為替情報を取得
+      // curl  -d  '{"execType":"1", "pricePeriod":["2021-01-01","2021-01-02","2021-01-03","2021-01-04","2021-01-05","2021-01-06"]}' -L https://script.google.com/macros/s/AKfycbzPieZWZ8_m_KkaWypUiE8V9vALCH8n7lsVjEblz8QdH2fddrJX04Fx/exec
       $sendURL = "https://script.google.com/macros/s/AKfycbzPieZWZ8_m_KkaWypUiE8V9vALCH8n7lsVjEblz8QdH2fddrJX04Fx/exec";
-      $sendDate = array_column( $aaa, 'Date' );
+      $sendDate = array_keys($organizePrice);
+      // $sendDate = ["2021-01-01","2021-01-02"];
       $returnAPI = $this->curlCoalGAS($sendURL,$sendDate);
-      dd($returnAPI);
 
-      return json_encode($aaa);
+      $i = 0;
+      $returnPriceS = array();
+      foreach ( $organizePrice as $arrayDate => $sPrice ) {
+        $returnPrice = array();
+        $returnPrice["Date"] = $arrayDate;
+        $returnPrice["Open"] = $sPrice["Open"] * $returnAPI->message[$i];
+        $returnPrice["High"] = $sPrice["High"] * $returnAPI->message[$i];
+        $returnPrice["Low"] = $sPrice["Low"] * $returnAPI->message[$i];
+        $returnPrice["Close"] = $sPrice["Close"] * $returnAPI->message[$i];
+        $returnPrice["Volume"] = $sPrice["Volume"];
+        array_push($returnPriceS,$returnPrice);
+        $i++;
+      }
+      return json_encode($returnPriceS);
     }
 
+    // GASへのcurlはたぶんどこでも使うので関数化しておく。
     public function curlCoalGAS($gasURL,$gasSetText){
-
 
       $params = array("execType" => "1","pricePeriod" => $gasSetText);
 
