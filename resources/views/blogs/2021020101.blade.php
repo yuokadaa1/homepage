@@ -31,31 +31,34 @@
 
     <div class="container mb-4">
     	<p>
-    		{{ Form::radio('selectButton', '1', true, array('id' => '111')) }} {{ Form::label('111', '表示期間の選択：直近期間を指定') }}
+    		<!-- {{ Form::radio('selectButton', '1', true, array('id' => '111')) }} {{ Form::label('111', '表示期間の選択：直近期間を指定') }} -->
+        {{ Form::label('111', '表示期間の選択：表示する期間を指定') }}
     	</p>
       <p class="container ml-4">
-    		{{ Form::radio('selectMonth', '1', true, array('id' => '1Month')) }} {{ Form::label('1Month', '1ヶ月') }}
-    		{{ Form::radio('selectMonth', '2', false, array('id' => '6Month')) }} {{ Form::label('6Month', '6ヶ月') }}
-    		{{ Form::radio('selectMonth', '3', false, array('id' => '1Year')) }} {{ Form::label('1Year', '1年') }}
-    		{{ Form::radio('selectMonth', '4', false, array('id' => '3Year')) }} {{ Form::label('3Year', '3年') }}
-    		{{ Form::radio('selectMonth', '5', false, array('id' => '6Year')) }} {{ Form::label('6Year', '6年') }}
+    		{{ Form::radio('selectDays', '1', true, array('id' => '300days')) }} {{ Form::label('1Month', '300日') }}
+    		{{ Form::radio('selectDays', '2', false, array('id' => '1Year')) }} {{ Form::label('1Year', '1年') }}
+    		{{ Form::radio('selectDays', '3', false, array('id' => '2Year')) }} {{ Form::label('2Year', '2年') }}
+    		{{ Form::radio('selectDays', '4', false, array('id' => '3Year')) }} {{ Form::label('3Year', '3年') }}
+    		{{ Form::radio('selectDays', '5', false, array('id' => '4Year')) }} {{ Form::label('4Year', '4年') }}
+        {{ Form::radio('selectDays', '6', false, array('id' => '5Year')) }} {{ Form::label('5Year', '5年') }}
     	</p>
-    	<p>
+
+    	<!-- <p>
     		{{ Form::radio('selectButton', '2', false, array('id' => '112')) }} {{ Form::label('112', '表示期間の選択：日付を指定') }}
     	</p>
 
-    	<div class="contai ner ml-4 form-group row mb-0">
+    	<div class="container ml-4 form-group row mb-0">
         <label for="text3a" class="col-form-label">開始</label>
         <div class="col-sm-4">
           <input type="text" id="pickerStart" class="form-control" placeholder="年/月/日">
         </div>
       </div>
-      <div class="container ml-4 form-group row">
+      <div class="container ml-4 form-group row mb-0">
         <label for="text3a" class="col-form-label">終了</label>
         <div class="col-sm-4">
           <input type="text" id="pickerStart" class="form-control" placeholder="年/月/日">
         </div>
-      </div>
+      </div> -->
 
     </div>
 
