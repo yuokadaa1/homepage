@@ -88,14 +88,20 @@
                 </div>
 
                 <div class="links">
-                  <a href="https://laravel.com/docs" class="disabled">Docs</a>
-                  <a href="https://laracasts.com" class="disabled">Laracasts</a>
+                  <!-- <a href="https://laravel.com/docs" class="disabled">Docs</a> -->
+                  <a class="disabled">Docs</a>
+                  <!-- <a href="https://laracasts.com" class="disabled">Laracasts</a> -->
+                  <a class="disabled">Laracasts</a>
                   <a href={{ url("/twitter") }} class="text-primary">Twitter</a>
                   <a href={{ url("/blog") }} class="text-primary">Blog</a>
-                  <a href="https://nova.laravel.com" class="disabled">Nova</a>
-                  <a href="https://forge.laravel.com" class="disabled">Forge</a>
-                  <a href="https://vapor.laravel.com" class="disabled">Vapor</a>
-                  <a href="https://github.com/laravel/laravel" class="disabled">GitHub</a>
+                  <!-- <a href="https://nova.laravel.com" class="disabled">Nova</a>/ -->
+                  <a class="disabled">Nova</a>
+                  <!-- <a href="https://forge.laravel.com" class="disabled">Forge</a> -->
+                  <a class="disabled">Forge</a>
+                  <!-- <a href="https://vapor.laravel.com" class="disabled">Vapor</a> -->
+                  <a class="disabled">Vapor</a>
+                  <!-- <a href="https://github.com/laravel/laravel" class="disabled">GitHub</a> -->
+                  <a class="disabled">GitHub</a>
                   <a href={{ url("/admin") }} class="text-primary">admin</a>
                 </div>
 

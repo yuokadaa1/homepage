@@ -147,6 +147,21 @@ class PostsController extends Controller
 
     private function b2020052702(Request $request,$arrayData){
       $input["BuySell"] = $request->selBuySell;
+
+  //     +request: Symfony\Component\HttpFoundation\ParameterBag {#44 ▼
+  // #parameters: array:10 [▼
+  //   "_token" => "bM4uzDR9nx4DDFFN3LRJosVe9e2fFZVvUfKsibvQ"
+  //   "selectPair" => "2"
+  //   "inputRate" => "1.3925"
+  //   "numNetAssets" => "1000000"
+  //   "selBuySell" => "0"
+  //   "selLeverage" => "0"
+  //   "numAmount" => "100"
+  //   "selMaintenanceRate" => "9"
+  //   "numSettlement" => "1300000"
+  //   "button1" => "計算開始"
+  // ]
+  
       // switch ($request->selectPair) {
       //   case "1"
       //     return ;
@@ -203,7 +218,6 @@ class PostsController extends Controller
 
       // keyでソート
       ksort($getArrayPrice);
-
 
       // SpreadSheetから為替情報を取得
       // curl  -d  '{"execType":"1", "pricePeriod":["2021-01-01","2021-01-02","2021-01-03","2021-01-04","2021-01-05","2021-01-06"]}' -L https://script.google.com/macros/s/AKfycbzPieZWZ8_m_KkaWypUiE8V9vALCH8n7lsVjEblz8QdH2fddrJX04Fx/exec

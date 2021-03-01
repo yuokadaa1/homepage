@@ -14,8 +14,8 @@ function chart(data){
   //データの最小値と最大値の間隔の縮尺を一定の割合で調整する
   //.range([描画領域の最小座標,描画領域の最大座標])
   var y = d3.scaleLinear().range([height, 0]);
+  // ローソク足の設定
 
-// ローソク足の設定
   var candlestick = techan.plot.candlestick().xScale(x).yScale(y);
 
   var xAxis = d3.axisBottom()
@@ -44,48 +44,48 @@ function chart(data){
 	// {"Date":"2015-01-19","Open":17000.8,"High":17039.8,"Low":16911.6,"Close":17014.3,"Volume":476},
 	// {"Date":"2015-01-20","Open":17071.7,"High":17366.3,"Low":17066.8,"Close":17366.3,"Volume":799}]
 
-		// 日時で並び替えを行う
-		var accessor = candlestick.accessor();
+	// 日時で並び替えを行う
+	var accessor = candlestick.accessor();
 
-    console.log(data.length);
-    console.log(data);
-		//こいつはデータを抽出・並べ替えしているだけ。
-		data = data.map(function(d) {
-				return {
-						date: parseDate(d.Date),
-						open: +d.Open,
-						high: +d.High,
-						low: +d.Low,
-						close: +d.Close,
-						volume: +d.Volume
-				};
-		}).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
-	  console.log(data);
+  console.log(data.length);
+  console.log(data);
+	//こいつはデータを抽出・並べ替えしているだけ。
+	data = data.map(function(d) {
+			return {
+					date: parseDate(d.Date),
+					open: +d.Open,
+					high: +d.High,
+					low: +d.Low,
+					close: +d.Close,
+					volume: +d.Volume
+			};
+	}).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
+  console.log(data);
 
-		// ページに要素を追加していく(.append＝jQueryでの要素追加。"g"のclass=candelstickを追加)
-		svg.append("g")
-						.attr("class", "candlestick");
+	// ページに要素を追加していく(.append＝jQueryでの要素追加。"g"のclass=candelstickを追加)
+	svg.append("g")
+					.attr("class", "candlestick");
 
-		svg.append("g")
-						.attr("class", "x axis")
-						.attr("transform", "translate(0," + height + ")");
+	svg.append("g")
+					.attr("class", "x axis")
+					.attr("transform", "translate(0," + height + ")");
 
-		svg.append("g")
-						.attr("class", "y axis")
-						.append("text")
-						.attr("transform", "rotate(-90)") // Y軸ラベルを縦書きに
-						.attr("y", 6)
-						.attr("dy", ".71em")
-						.style("text-anchor", "end")
-						.text("価格（＄）");
+	svg.append("g")
+					.attr("class", "y axis")
+					.append("text")
+					.attr("transform", "rotate(-90)") // Y軸ラベルを縦書きに
+					.attr("y", 6)
+					.attr("dy", ".71em")
+					.style("text-anchor", "end")
+					.text("価格（＄）");
 
-		x.domain(data.map(candlestick.accessor().d));
-		y.domain(techan.scale.plot.ohlc(data, candlestick.accessor()).domain());
+	x.domain(data.map(candlestick.accessor().d));
+	y.domain(techan.scale.plot.ohlc(data, candlestick.accessor()).domain());
 
-		svg.selectAll("g.candlestick").datum(data).call(candlestick);
-		svg.selectAll("g.x.axis").call(xAxis);
-		svg.selectAll("g.y.axis").call(yAxis);
-		console.log(data);
+	svg.selectAll("g.candlestick").datum(data).call(candlestick);
+	svg.selectAll("g.x.axis").call(xAxis);
+	svg.selectAll("g.y.axis").call(yAxis);
+	console.log(data);
 }
 
 chart(data);
