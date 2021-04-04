@@ -143,10 +143,25 @@
           <p>%</p>
         </div>
 
-        <div class="form-inline">
+        <!-- <div class="form-inline">
           <label class="col-sm-3 control-label">決済レート</label>
           <input type="number" step="100000" id="numSettlement" name="numSettlement" class="col-sm-2 form-control" />
+        </div> -->
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">決済レート</label>
+          <input type="number" step="0.001" class="col-sm-2 form-control" id="numSettlement" name="numSettlement"
+            @isset( $requestD )
+              value='{{ old("numSettlement", $requestD->numSettlement) }}'>
+            @else
+              value='{{ old("numSettlement", $json[0]["price"])}}'>
+            @endisset
         </div>
+
+
+
+
+
 
         <input type="submit" name="button1" value="計算開始" class="btn btn-success btn-wide" />
 

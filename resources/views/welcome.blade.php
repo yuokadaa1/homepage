@@ -94,6 +94,7 @@
                   <a class="disabled">Laracasts</a>
                   <a href={{ url("/twitter") }} class="text-primary">Twitter</a>
                   <a href={{ url("/blog") }} class="text-primary">Blog</a>
+                  <a href={{ url("/lesson") }} class="text-primary">Lesson</a>
                   <!-- <a href="https://nova.laravel.com" class="disabled">Nova</a>/ -->
                   <a class="disabled">Nova</a>
                   <!-- <a href="https://forge.laravel.com" class="disabled">Forge</a> -->

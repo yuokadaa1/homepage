@@ -31,6 +31,13 @@ Route::post('/import/{kbn}', 'AdminController@import')->name('csvimport_import')
 Route::get('/twitter', 'Twitter@index');
 Route::post('/twitter/search', 'Twitter@search');
 
+// 授業用ページのindex
+Route::get('/lesson', 'LessonController@lessonIndex');
+// 授業用ページの個別ページ
+Route::get('/lesson/{id}','LessonController@lessonDetail');
+Route::post('/lesson/{id}','LessonController@lessonDetailP');
+
+
 
 
 

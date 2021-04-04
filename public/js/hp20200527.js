@@ -10,6 +10,8 @@ document.getElementById("selectPair").onchange = function() {
   var changeSelect = document.getElementById("selectPair").value;
   document.getElementById("inputRate").value = data[changeSelect]["price"];
   document.getElementById("inputRate").step = stepRate[changeSelect];
+  document.getElementById("numSettlement").value = data[changeSelect]["price"];
+  document.getElementById("numSettlement").step = stepRate[changeSelect];
 }
 
 // これは動いていない。3桁区切りの実行に失敗
