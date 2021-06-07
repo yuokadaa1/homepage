@@ -35,6 +35,27 @@
     </form>
   </div>
 
+  <h5>指定条件で検索する場合</h5>
+  <div class="container">
+    <form method="post" action="{{ url('/twitter/search') }}">
+      {{ csrf_field() }}
+      <div class="form-group">
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">URL</label>
+          @isset( $inputURL )
+            <input type="text" name="searchURL" class="col-sm-4 form-control" value={{ $inputURL }}>
+          @else
+            <input type="text" name="searchURL" class="col-sm-4 form-control">
+          @endisset
+        </div>
+
+        <input type="submit" name="button3" value="URLで検索" class="btn btn-success btn-wide" />
+
+      </div>
+    </form>
+  </div>
+
   @isset( $getTweets )
   <h5>検索結果</h5>
 

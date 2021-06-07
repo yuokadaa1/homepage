@@ -19,10 +19,14 @@ class Twitter extends Controller
     // 変数の初期設定
     $tweets = array();
     $gasSetText = array();
+    //Originの件数(全て1)
     $countO = 0;
+    //conversationの件数
     $countC = 0;
+    //reTweetの件数
     $countR = 0;
 
+    
     // URLで検索した場合、構成されているURLからtweetID,tweetUserに分解
     if( isset($request->button3) ){
       $address1 = parse_url($request->searchURL);
@@ -32,9 +36,9 @@ class Twitter extends Controller
     }
 
     // conversation元,conversation,reTweetのツイートを順番に取得
-    $originTweet = $this->getTweet("original",$request);
-    $conversation = $this->getTweet("conversation",$request);
-    $reTweet = $this->getTweet("reTweet",$request);
+    $originTweet = $this->getConversation("original",$request);
+    $conversation = $this->getConversation("conversation",$request);
+    $reTweet = $this->getConversation("reTweet",$request);
 
     if( !empty($originTweet) ){
       $tweets = array_merge($tweets,$originTweet->statuses);
@@ -76,7 +80,7 @@ class Twitter extends Controller
                 // 'tweet_count' => $tweet_count , 'tweet_count_all' => count($tweets->statuses)]);
   }
 
-  public function getTweet($searchType,$request){
+  public function getConversation($searchType,$request){
 
     $nextToken = "a";
     $tweet_count = 0;
