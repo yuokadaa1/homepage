@@ -25,20 +25,26 @@ class Twitter extends Controller
     $countC = 0;
     //reTweetの件数
     $countR = 0;
+    //wordでsearchした件数
+    $countS = 0;
 
-    
     // URLで検索した場合、構成されているURLからtweetID,tweetUserに分解
     if( isset($request->button3) ){
+
       $address1 = parse_url($request->searchURL);
       $address2 = explode("/",$address1['path']);
       $request->tweetId = $address2[3];
       $request->userName = $address2[1];
-    }
 
-    // conversation元,conversation,reTweetのツイートを順番に取得
-    $originTweet = $this->getConversation("original",$request);
-    $conversation = $this->getConversation("conversation",$request);
-    $reTweet = $this->getConversation("reTweet",$request);
+      // conversation元,conversation,reTweetのツイートを順番に取得
+      $originTweet = $this->getTweet("original",$request);
+      $conversation = $this->getTweet("conversation",$request);
+      $reTweet = $this->getTweet("reTweet",$request);
+
+    }elseif(isset($request->button4)){
+      // wordで検索した場合はconversationやretweetを探さない
+      $searchWord = $this->getTweet("searchWord",$request);
+    }
 
     if( !empty($originTweet) ){
       $tweets = array_merge($tweets,$originTweet->statuses);
@@ -52,8 +58,14 @@ class Twitter extends Controller
       $tweets = array_merge($tweets,$reTweet->statuses);
       $countR = $reTweet->count;
     }
+    if( !empty($searchWord)){
+      // 検索については日時でDESCSortする。項目を日付に指定するためいったんcollectionに変換⇒sortして配列に戻す
+      $tweets = collect(array_merge($tweets,$searchWord->statuses));
+      $tweets = $tweets->sortByDesc('created_at')->values()->toArray();
+      $countS = count($tweets);
+    }
 
-    $tweets = (object)(["statuses" => $tweets , "countO" =>$countO,"countC" => $countC,"countR" =>$countR]);
+    $tweets = (object)(["statuses" => $tweets , "countO" =>$countO,"countC" => $countC,"countR" =>$countR,"countS" =>$countS]);
 
     // 1件も取れていない場合（originalがとれていない＝アドレスエラーだが）は以降の処理をしない
     if( !empty($tweets->statuses) ){
@@ -75,12 +87,12 @@ class Twitter extends Controller
     }
 
     return view('twitter.index')->
-          with(['getTweets' => $tweets , 'inputURL' => $request->searchURL ,
+          with(['getTweets' => $tweets , 'inputURL' => $request->searchURL , 'inputWord' => $request->searchWord,
                 'tweet_count' => 0 , 'tweet_count_all' => 0]);
                 // 'tweet_count' => $tweet_count , 'tweet_count_all' => count($tweets->statuses)]);
   }
 
-  public function getConversation($searchType,$request){
+  public function getTweet($searchType,$request){
 
     $nextToken = "a";
     $tweet_count = 0;
@@ -88,7 +100,13 @@ class Twitter extends Controller
     $arrayDataS = array();
     $arrayDataM = array();
 
-    while( !empty($nextToken) and $tweet_count < 300 and $roop_count < 5 ):
+    // nextTokenが存在するか、取得したtweet件数が300未満か、roop回数が5回未満の間は取得を繰り返す。
+    // searchWordかけた時しかnumRotationは設定されないのでsearchURLの時は適当に3周りを設定。
+    if(!isset($request->numRotation)){
+      $request->numRotation = 3;
+    }
+
+    while( !empty($nextToken) and $roop_count < $request->numRotation ):
 
       $parts_name = array();
       $parts_id = array();
@@ -105,11 +123,18 @@ class Twitter extends Controller
       // エラーがあった場合はddして処理中断。
       if( empty($responseJsonText->errors) ){
       } else {
-        if($responseJsonText->errors[0]->title == "Not Found Error"){
-          // リツイート元のツイートが削除されている場合のエラーは読み飛ばす
-          // （referenced_tweets->idに入っているツイートが削除済み）
-          // https://linvi.github.io/tweetinvi/dist/twitter-api-v2/basics.html#errors
-        } else {
+        if(isset($responseJsonText->errors[0]->title)){
+          if($responseJsonText->errors[0]->title == "Not Found Error"){
+            // リツイート元のツイートが削除されている場合のエラーは読み飛ばす
+            // （referenced_tweets->idに入っているツイートが削除済み）
+            // https://linvi.github.io/tweetinvi/dist/twitter-api-v2/basics.html#errors
+          } elseif($responseJsonText->errors[0]->title == "Authorization Error") {
+            // "Sorry, you are not authorized to see the Tweet with referenced_tweets.id: [1403269474036314113]."
+            // 何かのAuthorizedエラー。スルーする。
+          }else{
+            dd("searchType:" . $searchType,"エラーが出現しました。" , $responseJsonText);
+          }
+        }else{
           dd("searchType:" . $searchType,"エラーが出現しました。" , $responseJsonText);
         }
       }
@@ -117,10 +142,22 @@ class Twitter extends Controller
       // データがとれなければブレイク
       if( $searchType == "reTweet" ){
         if( empty($responseJsonText) or count($responseJsonText) == 0 ){break;}
-      }else{
+      }elseif($searchType == "original" or $searchType == "conversation" or $searchType == "searchWord"){
         if( empty($responseJsonText->data) or count($responseJsonText->data) == 0 ){break;}
         if( empty($responseJsonText->includes) ){dd("includes(ユーザー情報)の取得に失敗しました。",$curl,$responseJsonText);}
         if( empty($responseJsonText->meta) and $searchType <> "original" ){dd("meta取得失敗",$searchType,$responseJsonText);}
+      }
+
+      // dd($responseJsonText);
+      // searchWordの場合は反響があるものだけを抽出する。
+      if($searchType == "searchWord"){
+        foreach ($responseJsonText->data as $key => $data){
+          if($data->public_metrics->retweet_count < $request->displayBorder and
+             $data->public_metrics->reply_count   < $request->displayBorder and
+             $data->public_metrics->like_count    < $request->displayBorder){
+            unset($responseJsonText->data[$key]);
+          }
+        }
       }
 
       if( $searchType == "reTweet" ){
@@ -135,7 +172,7 @@ class Twitter extends Controller
             $arrayDataS = array_merge($arrayDataS,array((object)$returnParts));
           }
         }
-      }else{
+      }elseif($searchType == "original" or $searchType == "conversation" or $searchType == "searchWord"){
         // user_fieldsは重複した場合1つしか帰らない(1idで2tweet取れた場合、dataは2,usersは1)ので検索する。
         // curlの返信結果が{data:[],includes:{users:[],media[]},meta;{}}になっているので検索用に並列化
         foreach( $responseJsonText->includes->users as $user ){
@@ -147,6 +184,7 @@ class Twitter extends Controller
           $data->searchType = $searchType;
         }
       }
+
       // 件数の加算とデータの退避
       $roop_count++;
       // originalの場合はmeta情報がセットされないので除外、while繰り返されるのはconveersationのみ
@@ -162,8 +200,11 @@ class Twitter extends Controller
         case "reTweet":
           $tweet_count = count($arrayDataS);
           break;
+        case "searchWord":
+          $tweet_count += $responseJsonText->meta->result_count;
+          $arrayDataS = array_merge($arrayDataS,$responseJsonText->data );
+          break;
       }
-
     endwhile;
 
     // $return = (object)(["statuses" => array_reverse($arrayDataS),"search_metadata" => array_reverse($arrayDataM)]);
@@ -177,6 +218,7 @@ class Twitter extends Controller
     $KEY = 'AAAAAAAAAAAAAAAAAAAAACwgHwEAAAAAtDtHjGC9fhSdqbYdcPQIOTb%2Fd%2F0%3DgfB2IdydyYfyw9Ao1YXLZ440FWyS491QzYNc02zs5OyTeMwyjb';
 
     $base = "https://api.twitter.com/2/tweets";
+
     if($searchType == "conversation" ){
       $param = "/search/recent?query=conversation_id:" . $request->tweetId;
       $param = $param . "&max_results=100";
@@ -185,15 +227,28 @@ class Twitter extends Controller
       $base = 'https://api.twitter.com/1.1/statuses/retweets/';
       $param = $request->tweetId . '.json';
       $param = $param . "?count=100";
-    }else{
+    }elseif($searchType == "original"){
       $param = "?ids=" . $request->tweetId;
+    }elseif($searchType == "searchWord"){
+      // uriに日本語を混ぜるときは16進に変換してから渡す
+      $param = "/search/recent?query=" . urlencode($request->searchWord);
+      // paramの確認用。苦戦したので残しておく。
+      // $param = "/search/recent?query=from:twitterdev";
+      // retweetの除外
+      $param = $param . urlencode(" ") . "-is:retweet";
+      // langの稼働確認中
+      if($request->selectLang == 0){
+        $param = $param . urlencode(" ") . "lang:en";
+      }
+      $param = $param . "&max_results=100";
     }
+
     // reTweetはv1.1で取ってくるのでこのへんが設定できない
-    if($searchType <> "reTweet"){
+    if($searchType = "original" or $searchType = "conversation" or $searchType = "searchWord"){
       $param = $param . "&expansions=author_id,attachments.media_keys,referenced_tweets.id";
       $param = $param . "&media.fields=preview_image_url,type";
       $param = $param . "&place.fields=country,country_code";
-      $param = $param . "&tweet.fields=created_at,lang,conversation_id";
+      $param = $param . "&tweet.fields=created_at,lang,conversation_id,public_metrics";
       $param = $param . "&user.fields=id,username";
     }
     $headers = array(

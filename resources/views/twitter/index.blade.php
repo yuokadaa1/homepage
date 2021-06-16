@@ -11,7 +11,6 @@
   </ol>
 </nav>
 
-
 <div class="container mb-4" id="1st">
 
   <h5>URLから検索する場合</h5>
@@ -35,22 +34,47 @@
     </form>
   </div>
 
-  <h5>指定条件で検索する場合</h5>
+  <h5>指定wordで検索する場合</h5>
   <div class="container">
     <form method="post" action="{{ url('/twitter/search') }}">
       {{ csrf_field() }}
       <div class="form-group">
 
         <div class="form-inline">
-          <label class="col-sm-3 control-label">URL</label>
-          @isset( $inputURL )
-            <input type="text" name="searchURL" class="col-sm-4 form-control" value={{ $inputURL }}>
+          <label class="col-sm-3 control-label">検索word</label>
+          @isset( $inputWord )
+            <input type="text" name="searchWord" class="col-sm-4 form-control" value={{ $inputWord }}>
           @else
-            <input type="text" name="searchURL" class="col-sm-4 form-control">
+            <input type="text" name="searchWord" class="col-sm-4 form-control" value="#manga">
           @endisset
         </div>
 
-        <input type="submit" name="button3" value="URLで検索" class="btn btn-success btn-wide" />
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">表示ボーダー</label>
+          <input type="number" step="10" id="displayBorder" name="displayBorder" class="col-sm-1 form-control"
+            @isset( $requestD->displayBorder )
+              value='{{ old('name', $requestD->displayBorder) }}'>
+            @else
+              value='{{ old('name', 100) }}'>
+            @endisset
+          <a>以上</a>
+        </div>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">API呼び出し回数</label>
+          <input type="number" value="5"  step="1" name="numRotation" class="col-sm-1 form-control" />
+          <a>(TwitterAPIの検索上限は15分にRequestを180回)</a>
+        </div>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">言語</label>
+          <select class="form-control" id="selectLang" name="selectLang">
+              <option value="0" selected>English</option>
+              <option value="1">指定なし</option>
+          </select>
+        </div>
+
+        <input type="submit" name="button4" value="wordで検索" class="btn btn-success btn-wide" />
 
       </div>
     </form>
@@ -59,7 +83,7 @@
   @isset( $getTweets )
   <h5>検索結果</h5>
 
-    <a>取得件数(original/conversation/retweet) = {{ $getTweets->countO }} / {{ $getTweets->countC }} / {{ $getTweets->countR }}</a>
+    <a>取得件数(original/conversation/retweet/searchW) = {{ $getTweets->countO }} / {{ $getTweets->countC }} / {{ $getTweets->countR }} / {{ $getTweets->countS }}</a>
     <div class="container">
       <table class="table table-hover-responsive">
         <tr class="thead-dark">
@@ -101,7 +125,14 @@
             </td>
           </tr>
           <tr>
-            <td>{{ $getTweet->searchType }}</td>
+            <!-- searchWordの場合はretweet数などの反響数を表示する。 -->
+            @if($getTweet->searchType == "searchWord")
+              <td><p>{{ $getTweet->searchType }}</p>{{ $getTweet->public_metrics->retweet_count}}/
+              {{ $getTweet->public_metrics->reply_count}}/{{ $getTweet->public_metrics->like_count}}</td>
+            @else
+              <td>{{ $getTweet->searchType }}</td>
+            @endif
+
             <td id="textJp{{$idx}}">{{ $getTweet->textJp }}</td>
             <td>
               <input type="button" name="getText{{$idx}}" value="TEXT" class="btn btn-success btn-wide"
@@ -121,9 +152,12 @@
 
   <script>
 
+    //TだからTextJPをcopyしているものと思われる
+    // input:$idx
+    // output:何かreturnしているが本命はclipbordに対する貼り付けのはず
     function copyTextToClipboardT(textVal){
       // 検索wordの取得時にはtextValにはURLが、リツイートの時はtextValにはAPIの返り値が格納
-      console.log("URLのほうが押されました");
+      console.log("TEXTJzpのほうが押されました。input:" + textVal);
 
       // hidden属性のURLをcopyしてクリップボードに貼り付け
       var copyFrom = document.createElement("textarea");
@@ -155,9 +189,12 @@
       return retVal;
     }
 
+    // こっちがURLのcopy
+    // input:idx or $inputURL(こっちは一番上の検索元欄での起動)
+    // output:clipbordにURLをcopy
     function copyTextToClipboard(textVal){
       // 検索wordの取得時にはtextValにはURLが、リツイートの時はtextValにはAPIの返り値が格納
-      // console.log("TEXTJzpのほうが押されました");
+      console.log("URLのほうが押されました。input:" + textVal);
 
       // hidden属性のURLをcopyしてクリップボードに貼り付け
       var copyFrom = document.createElement("textarea");
@@ -172,13 +209,22 @@
       }else{
         twitterurl = textVal;
       }
+
       // リプライ元を非表示に設定したURLの生成
-      if(textVal == 0){
-        copyFrom.textContent = '<figure class="wp-block-embed-twitter wp-block-embed is-type-rich is-provider-twitter"><div class="wp-block-embed__wrapper"><blockquote class="twitter-tweet" data-conversation="none">\r\n' + twitterurl + '\r\n</blockquote></div></figure>';
+      // searchWordで検索したときはURL検索inputBoxは空になっているので、このときはURLをそのまま返す。
+      var searchURL = document.getElementsByName("searchURL").item(0).value;
+      // console.log("searchURLは：" + searchURL);
+      if(searchURL == ""){
+        copyFrom.textContent = twitterurl;
       }else{
-        // 右側に設定することでリプライであることを表現する。
-        copyFrom.textContent = '<div align="right"><figure class="wp-block-embed-twitter wp-block-embed is-type-rich is-provider-twitter"><div class="wp-block-embed__wrapper"><blockquote class="twitter-tweet" data-conversation="none">\r\n' + twitterurl + '\r\n</blockquote></div></figure></div>';
+        if(textVal == 0){
+          copyFrom.textContent = '<figure class="wp-block-embed-twitter wp-block-embed is-type-rich is-provider-twitter"><div class="wp-block-embed__wrapper"><blockquote class="twitter-tweet" data-conversation="none">\r\n' + twitterurl + '\r\n</blockquote></div></figure>';
+        }else{
+          // 右側に設定することでリプライであることを表現する。
+          copyFrom.textContent = '<div align="right"><figure class="wp-block-embed-twitter wp-block-embed is-type-rich is-provider-twitter"><div class="wp-block-embed__wrapper"><blockquote class="twitter-tweet" data-conversation="none">\r\n' + twitterurl + '\r\n</blockquote></div></figure></div>';
+        }
       }
+
 
       // copyFrom.textContent = '<figure class="wp-block-embed-twitter wp-block-embed is-type-rich is-provider-twitter"><div class="wp-block-embed__wrapper"><blockquote class="twitter-tweet" data-conversation="none">\r\n' + twitterurl + '\r\n</blockquote></div></figure>';
 
