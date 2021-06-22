@@ -150,7 +150,7 @@ class Twitter extends Controller
 
       // dd($responseJsonText);
       // searchWordの場合は反響があるものだけを抽出する。
-      if($searchType == "searchWord"){
+      if($searchType == "searchWord" and $request->displayBorder > 0){
         foreach ($responseJsonText->data as $key => $data){
           if($data->public_metrics->retweet_count < $request->displayBorder and
              $data->public_metrics->reply_count   < $request->displayBorder and
@@ -230,18 +230,32 @@ class Twitter extends Controller
     }elseif($searchType == "original"){
       $param = "?ids=" . $request->tweetId;
     }elseif($searchType == "searchWord"){
-      // uriに日本語を混ぜるときは16進に変換してから渡す
-      $param = "/search/recent?query=" . urlencode($request->searchWord);
+
       // paramの確認用。苦戦したので残しておく。
       // $param = "/search/recent?query=from:twitterdev";
+
+      // uriに日本語を混ぜるときは16進に変換してから渡す
+      $param = "/search/recent?query=" . urlencode($request->searchWord);
+
       // retweetの除外
       $param = $param . urlencode(" ") . "-is:retweet";
-      // langの稼働確認中
+
       if($request->selectLang == 0){
         $param = $param . urlencode(" ") . "lang:en";
       }
+
+      // これも効かない。効きそうだんだがなぁ。
+      // $param = $param . urlencode(" ") . "since:2021-06-14";
+      // 返信の最小件数を指定、これが効けばdisplayBorderの設定は不要⇒効かないのでいれないこと。
+      if($request->minReply > 0){
+        dd("できそうでできないmin_replies。0で検索すれば検索文から除外できるので0で検索すること。");
+        $param = $param . urlencode(" ") . "min_replies:" . (int)$request->minReply;
+      }
+
       $param = $param . "&max_results=100";
     }
+
+    // dd($param);
 
     // reTweetはv1.1で取ってくるのでこのへんが設定できない
     if($searchType = "original" or $searchType = "conversation" or $searchType = "searchWord"){

@@ -28,7 +28,14 @@
           @endisset
         </div>
 
-        <input type="submit" name="button3" value="URLで検索" class="btn btn-success btn-wide" />
+        <div class="form-inline">
+        <!-- <div class="btn-toolbar"> -->
+          <!-- <div class="btn-group"> -->
+            <input type="submit" name="button3" value="URLで検索" class="btn btn-success btn-wide mr-3" />
+            <input type="button" name="button5" value="clipbordから貼付" class="btn btn-success btn-wide"
+              onclick="pasteClipboard()"/>
+          <!-- </div> -->
+        </div>
 
       </div>
     </form>
@@ -55,7 +62,18 @@
             @isset( $requestD->displayBorder )
               value='{{ old('name', $requestD->displayBorder) }}'>
             @else
-              value='{{ old('name', 100) }}'>
+              value='{{ old('name', 30) }}'>
+            @endisset
+          <a>以上</a>
+        </div>
+
+        <div class="form-inline">
+          <label class="col-sm-3 control-label">最小返信回数</label>
+          <input type="number" step="0" id="minReply" name="minReply" class="col-sm-1 form-control"
+            @isset( $requestD->displayBorder )
+              value='{{ old('name', $requestD->displayBorder) }}'>
+            @else
+              value='{{ old('name', 0) }}'>
             @endisset
           <a>以上</a>
         </div>
@@ -127,8 +145,10 @@
           <tr>
             <!-- searchWordの場合はretweet数などの反響数を表示する。 -->
             @if($getTweet->searchType == "searchWord")
-              <td><p>{{ $getTweet->searchType }}</p>{{ $getTweet->public_metrics->retweet_count}}/
-              {{ $getTweet->public_metrics->reply_count}}/{{ $getTweet->public_metrics->like_count}}</td>
+              <td><p>ReTweet:{{ $getTweet->public_metrics->retweet_count}}</p>
+                  <p class="text-danger">Reply:{{ $getTweet->public_metrics->reply_count}}</p>
+                  <p>Like:{{ $getTweet->public_metrics->like_count}}</p>
+              </td>
             @else
               <td>{{ $getTweet->searchType }}</td>
             @endif
@@ -253,6 +273,25 @@
       // 処理結果を返却
       return retVal;
     }
+
+    // input:$idx
+    // output:何かreturnしているが本命はclipbordに対する貼り付けのはず
+    // process:clipbordの内容をinptBoxに張り付ける
+    function pasteClipboard(){
+      console.log("pasteClipordの起動。")
+
+      navigator.clipboard.readText()
+      .then(text => {
+        console.log('ペーストされたテキスト: ', text);
+        document.getElementsByName("searchURL").item(0).value = text;
+      })
+      .catch(err => {
+        console.error('ユーザが拒否、もしくはなんらかの理由で失敗', err);
+      });
+
+
+    }
+
   </script>
 
 </div>
