@@ -150,7 +150,13 @@
                   <p>Like:{{ $getTweet->public_metrics->like_count}}</p>
               </td>
             @else
-              <td>{{ $getTweet->searchType }}</td>
+              <!-- usernameがoriginalと同一の場合は返信に対する返信なので赤くして判別できるようにしておく -->
+              @if($getTweets->statuses[0]->username == $getTweet->username)
+                <td style="color:red;">{{ $getTweet->searchType }}</td>
+              @else
+                <td>{{ $getTweet->searchType }}</td>
+              @endif
+              <!-- <td>{{ $getTweet->searchType }}</td> -->
             @endif
 
             <td id="textJp{{$idx}}">{{ $getTweet->textJp }}</td>
