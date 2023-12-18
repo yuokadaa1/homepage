@@ -175,8 +175,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        //Laravel-Excelの導入
-        Maatwebsite\Excel\ExcelServiceProvider::class,
+        //Laravel-Excelの導入 v-upに伴い凍結
+        //Maatwebsite\Excel\ExcelServiceProvider::class,
 
         //crowlerの導入1/2
         Weidner\Goutte\GoutteServiceProvider::class,
@@ -233,8 +233,9 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
+		//v-upに伴い凍結
         //Laravel-Excelの導入
-        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        //'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
         //crowlerの導入2/2
         'Goutte' => Weidner\Goutte\GoutteFacade::class,

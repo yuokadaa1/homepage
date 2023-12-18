@@ -1,6 +1,10 @@
 <?php
 
-use Maatwebsite\Excel\Excel;
+
+//PHPv-upに伴い凍結
+//use Maatwebsite\Excel\Excel;
+
+return[];
 
 return [
 
