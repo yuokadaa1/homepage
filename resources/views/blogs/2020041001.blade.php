@@ -71,7 +71,7 @@
     <div class="mt-3">
       <div class="img-fluid">
         <p>図①_日銀の買入額</p>
-        <img src="{{ asset('images/日銀の買入額.png')}}" alt="①日銀の買入額" title="日銀の買入額" id="Graph1"  class="border">
+        <img src="{{ asset('/日銀の買入額.png')}}" alt="①日銀の買入額" title="日銀の買入額" id="Graph1"  class="border">
       </div>
     </div>
 

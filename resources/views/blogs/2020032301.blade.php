@@ -169,21 +169,21 @@
       <div class="mt-3">
         <div class="img-fluid">
           <p>図①_消費者物価指数(2015年を基準値100とした推移)</p>
-          <img src="{{ asset('images/消費者物価指数.png')}}" alt="①消費者物価指数" title="①消費者物価指数" id="Graph1"  class="border">
+          <img src="{{ asset('/消費者物価指数.png')}}" alt="①消費者物価指数" title="①消費者物価指数" id="Graph1"  class="border">
         </div>
       </div>
 
       <div class="mt-3">
         <div class="img-fluid">
           <p>図②_銀行預金額の推移(1989年に銀行に100万円を預金)</p>
-          <img src="{{ asset('images/銀行預金金利の推移.png')}}"alt="②銀行預金金利の推移" title="②銀行預金金利の推移"  id="Graph2" class="border">
+          <img src="{{ asset('/銀行預金金利の推移.png')}}"alt="②銀行預金金利の推移" title="②銀行預金金利の推移"  id="Graph2" class="border">
         </div>
       </div>
 
       <div class="mt-3">
         <div class="img-fluid">
           <p>図③_日経平均株価（年／終値）の推移</p>
-          <img id="Graph3" src="{{ asset('images/日経平均株価（年／終値）の推移.png')}}" alt="③日経平均株価" title="③日経平均株価"   class="border" data-toggle="modal" data-target="#image_Modal" style="cursor:pointer" >
+          <img id="Graph3" src="{{ asset('/日経平均株価（年／終値）の推移.png')}}" alt="③日経平均株価" title="③日経平均株価"   class="border" data-toggle="modal" data-target="#image_Modal" style="cursor:pointer" >
         </div>
       </div>
 
@@ -192,7 +192,7 @@
         <div class="modal-dialog modal-lg modal-middle">
           <div class="modal-content">
             <div class="modal-body">
-              <img src="{{ asset('images/日経平均株価（年／終値）の推移.png')}}" alt="baby-1151351_1920" class="aligncenter size-full wp-image-425"/>
+              <img src="{{ asset('/日経平均株価（年／終値）の推移.png')}}" alt="baby-1151351_1920" class="aligncenter size-full wp-image-425"/>
             </div>
             <div class="modal-img_footer">
               <p>モーダル商品</p><!-- テキスト表示 -->
